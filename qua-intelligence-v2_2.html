@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QUA — Brand Intelligence System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black:#0A0A0A; --white:#FAFAF8; --cream:#F2EFE8;
+  --red:#C0392B; --red-soft:#F9EBEA;
+  --gold:#A67C00; --gold-soft:#FDF6E3;
+  --green:#1A7A4A; --green-soft:#E8F5EE;
+  --mid:#6B6B6B; --border:#1E1E1E;
+  --fd:'Playfair Display',serif; --fb:'DM Sans',sans-serif; --fm:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--black);color:var(--white);font-family:var(--fb);min-height:100vh;overflow-x:hidden;}
+
+/* HEADER */
+.header{padding:1.5rem 2.5rem;border-bottom:1px solid #1A1A1A;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+.header-left h1{font-family:var(--fd);font-size:clamp(1.4rem,2.5vw,2rem);font-weight:900;letter-spacing:-0.02em;}
+.header-left h1 span{color:var(--red);}
+.header-left p{font-size:0.65rem;color:#444;margin-top:0.3rem;font-family:var(--fm);letter-spacing:0.05em;text-transform:uppercase;}
+.health-badge{display:flex;flex-direction:column;align-items:center;}
+.health-badge .score{font-family:var(--fd);font-size:2.8rem;font-weight:900;color:var(--red);line-height:1;}
+.health-badge .slabel{font-size:0.6rem;color:#444;font-family:var(--fm);letter-spacing:0.08em;text-transform:uppercase;}
+.health-badge .sstatus{font-size:0.65rem;font-weight:600;color:var(--red);font-family:var(--fm);}
+
+/* TABS */
+.tabs{display:flex;gap:0;border-bottom:1px solid #1A1A1A;background:#080808;}
+.tab{padding:0.9rem 2rem;font-family:var(--fm);font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:#444;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;display:flex;align-items:center;gap:0.5rem;}
+.tab:hover{color:#888;}
+.tab.active{color:var(--white);border-bottom-color:var(--red);}
+.tab-dot{width:6px;height:6px;border-radius:50%;background:#333;}
+.tab.active .tab-dot{background:var(--red);}
+
+/* PANELS */
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* GRID */
+.main-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:#1A1A1A;}
+.panel{background:#0D0D0D;padding:1.5rem;transition:background 0.2s;}
+.panel:hover{background:#111;}
+.panel-title{font-family:var(--fm);font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:#444;margin-bottom:1.2rem;display:flex;align-items:center;gap:0.5rem;}
+.panel-title::before{content:'';display:inline-block;width:18px;height:2px;background:var(--red);flex-shrink:0;}
+
+/* PLATFORM MAP */
+.span2{grid-column:1/3;}
+.span3{grid-column:1/4;}
+.platform-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;}
+.platform-card{background:#141414;border:1px solid #1E1E1E;border-radius:4px;padding:1rem;cursor:pointer;transition:all 0.2s;position:relative;}
+.platform-card:hover{border-color:#333;background:#181818;}
+.platform-card.critical{border-left:3px solid var(--red);}
+.platform-card.warning{border-left:3px solid var(--gold);}
+.platform-card.healthy{border-left:3px solid var(--green);}
+.platform-name{font-size:0.8rem;font-weight:600;color:var(--white);margin-bottom:0.5rem;}
+.platform-stats{display:flex;gap:0.8rem;flex-wrap:wrap;}
+.stat-chip{font-size:0.65rem;font-family:var(--fm);color:#555;}
+.stat-chip span{display:block;font-size:1rem;font-weight:600;color:var(--white);font-family:var(--fd);}
+.urgency{position:absolute;top:0.75rem;right:0.75rem;font-size:0.55rem;font-family:var(--fm);letter-spacing:0.08em;padding:0.2rem 0.5rem;border-radius:2px;text-transform:uppercase;}
+.u-critical{background:var(--red);color:white;}
+.u-moderate{background:#3D2B00;color:var(--gold);}
+.u-low{background:#0D2B1A;color:#4CAF7D;}
+
+/* TOPIC BAR */
+.topic-bar{display:flex;flex-direction:column;gap:0.7rem;}
+.topic-row{display:flex;flex-direction:column;gap:0.3rem;}
+.topic-meta{display:flex;justify-content:space-between;}
+.topic-name{font-size:0.78rem;color:#CCC;font-weight:500;}
+.topic-pct{font-family:var(--fm);font-size:0.72rem;color:#555;}
+.topic-track{height:4px;background:#1A1A1A;border-radius:2px;overflow:hidden;}
+.topic-fill{height:100%;border-radius:2px;transition:width 1s ease;}
+.fill-red{background:var(--red);}
+.fill-gold{background:var(--gold);}
+.fill-mid{background:#444;}
+.fill-green{background:var(--green);}
+
+/* QUEUE */
+.queue-list{display:flex;flex-direction:column;gap:1px;background:#1A1A1A;border-radius:4px;overflow:hidden;}
+.queue-item{background:#0D0D0D;display:grid;grid-template-columns:40px 80px 1fr auto;gap:1rem;align-items:center;padding:1rem 1.2rem;cursor:pointer;transition:background 0.2s;border-left:3px solid transparent;}
+.queue-item:hover{background:#141414;}
+.rank-1{border-left-color:var(--red)!important;}
+.rank-2{border-left-color:#E74C3C!important;}
+.rank-3{border-left-color:var(--gold)!important;}
+.rank-4{border-left-color:#888!important;}
+.rank-5{border-left-color:#444!important;}
+.q-rank{font-family:var(--fd);font-size:1.4rem;font-weight:900;color:#2A2A2A;text-align:center;}
+.rank-1 .q-rank{color:var(--red);}
+.rank-2 .q-rank{color:#E74C3C;}
+.rank-3 .q-rank{color:var(--gold);}
+.damage-badge{display:flex;flex-direction:column;align-items:center;gap:0.2rem;}
+.dscore{font-family:var(--fm);font-size:1.1rem;font-weight:500;}
+.dlabel{font-size:0.55rem;font-family:var(--fm);letter-spacing:0.06em;text-transform:uppercase;color:#444;}
+.sc-critical{color:var(--red);}
+.sc-high{color:#E67E22;}
+.sc-medium{color:var(--gold);}
+.sc-low{color:#888;}
+.q-content{min-width:0;}
+.q-header{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.3rem;flex-wrap:wrap;}
+.ptag{font-size:0.6rem;font-family:var(--fm);background:#1A1A1A;color:#666;padding:0.15rem 0.5rem;border-radius:2px;letter-spacing:0.06em;text-transform:uppercase;}
+.mdate{font-size:0.65rem;color:#444;font-family:var(--fm);}
+.q-excerpt{font-size:0.82rem;color:#888;line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.q-excerpt strong{color:#CCC;font-weight:500;}
+.ai-btn{background:transparent;border:1px solid #2A2A2A;color:#555;font-family:var(--fm);font-size:0.65rem;letter-spacing:0.06em;text-transform:uppercase;padding:0.5rem 0.8rem;border-radius:3px;cursor:pointer;white-space:nowrap;transition:all 0.2s;display:flex;align-items:center;gap:0.4rem;}
+.ai-btn:hover{border-color:var(--red);color:var(--red);background:#1A0A0A;}
+.ai-btn:disabled{opacity:0.4;cursor:not-allowed;}
+
+/* AI RESPONSE */
+.ai-response-panel{display:none;animation:fadeIn 0.3s ease;}
+.ai-response-panel.visible{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.response-container{background:#080808;border:1px solid #1E1E1E;border-left:3px solid var(--red);padding:1.5rem;border-radius:4px;}
+.response-meta{display:flex;align-items:center;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;}
+.response-tag{font-size:0.6rem;font-family:var(--fm);background:var(--red);color:white;padding:0.2rem 0.6rem;border-radius:2px;letter-spacing:0.08em;text-transform:uppercase;}
+.response-for{font-size:0.72rem;color:#555;font-family:var(--fm);}
+.response-text{font-size:0.9rem;line-height:1.8;color:#CCC;white-space:pre-wrap;font-family:var(--fb);}
+.response-text.streaming::after{content:'▋';animation:blink 0.7s infinite;color:var(--red);}
+@keyframes blink{0%,50%{opacity:1;}51%,100%{opacity:0;}}
+.response-actions{display:flex;gap:0.75rem;margin-top:1rem;flex-wrap:wrap;}
+.copy-btn,.dismiss-btn{font-family:var(--fm);font-size:0.65rem;letter-spacing:0.06em;text-transform:uppercase;padding:0.5rem 1rem;border-radius:3px;cursor:pointer;border:1px solid;transition:all 0.2s;}
+.copy-btn{background:var(--red);border-color:var(--red);color:white;}
+.dismiss-btn{background:transparent;border-color:#2A2A2A;color:#555;}
+.dismiss-btn:hover{border-color:#444;color:#888;}
+
+/* SEO */
+.seo-grid{display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;gap:0;background:#1A1A1A;border-radius:4px;overflow:hidden;}
+.seo-col{background:#0D0D0D;padding:1.2rem;}
+.seo-divider{background:#1A1A1A;}
+.seo-col-title{font-size:0.6rem;font-family:var(--fm);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.8rem;padding-bottom:0.6rem;border-bottom:1px solid #1A1A1A;}
+.seo-col-title.bad{color:var(--red);}
+.seo-col-title.good{color:var(--green);}
+.seo-col-title.result{color:var(--gold);}
+.seo-field{margin-bottom:0.8rem;}
+.seo-field-label{font-size:0.58rem;font-family:var(--fm);color:#444;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.3rem;}
+.seo-field-value{font-size:0.78rem;line-height:1.5;color:#999;}
+.seo-field-value.bad{color:var(--red);opacity:0.7;text-decoration:line-through;}
+.seo-field-value.good{color:#CCC;}
+.search-term{display:inline-flex;align-items:center;gap:0.3rem;background:#141414;border:1px solid #1E1E1E;border-radius:2px;padding:0.25rem 0.5rem;font-size:0.72rem;font-family:var(--fm);color:#888;margin:0.2rem 0.2rem 0 0;}
+.search-term.unlocked{color:#4CAF7D;border-color:#1A3A2A;background:#0D1A12;}
+.search-term .dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;}
+
+/* OPP */
+.opp-list{display:flex;flex-direction:column;gap:0.6rem;}
+.opp-card{background:#141414;border:1px solid #1E1E1E;border-left:3px solid var(--green);border-radius:3px;padding:0.8rem 1rem;cursor:pointer;transition:all 0.2s;}
+.opp-card:hover{background:#181818;}
+.opp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem;}
+.opp-platform{font-size:0.6rem;font-family:var(--fm);color:#4CAF7D;letter-spacing:0.06em;text-transform:uppercase;}
+.opp-value{font-size:0.65rem;font-family:var(--fm);color:#555;}
+.opp-text{font-size:0.8rem;color:#888;line-height:1.5;}
+
+/* TREND */
+.trend-svg{width:100%;height:80px;}
+.trend-labels{display:flex;justify-content:space-between;margin-top:0.5rem;}
+.trend-label{font-size:0.6rem;font-family:var(--fm);color:#333;}
+
+/* ═══════════════════════════════════════════
+   TAB 2 — SOLVE
+═══════════════════════════════════════════ */
+.solve-grid{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 120px);gap:1px;background:#1A1A1A;}
+.solve-nav{background:#080808;padding:1.5rem 0;}
+.solve-nav-item{padding:0.9rem 1.5rem;font-family:var(--fm);font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;color:#444;cursor:pointer;transition:all 0.2s;border-left:2px solid transparent;display:flex;align-items:center;gap:0.8rem;}
+.solve-nav-item:hover{color:#888;background:#0D0D0D;}
+.solve-nav-item.active{color:var(--white);border-left-color:var(--red);background:#0D0D0D;}
+.solve-nav-item .nav-number{font-family:var(--fd);font-size:0.9rem;color:#2A2A2A;font-weight:700;}
+.solve-nav-item.active .nav-number{color:var(--red);}
+.solve-nav-divider{height:1px;background:#1A1A1A;margin:0.5rem 0;}
+.solve-content{background:#0A0A0A;padding:2rem;}
+.solve-section{display:none;}
+.solve-section.active{display:block;}
+
+/* Section headers */
+.solve-h1{font-family:var(--fd);font-size:1.8rem;font-weight:900;margin-bottom:0.4rem;line-height:1.1;}
+.solve-h1 span{color:var(--red);}
+.solve-sub{font-size:0.8rem;color:#555;font-family:var(--fm);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:2rem;}
+
+/* Protocol cards */
+.protocol-timeline{display:flex;flex-direction:column;gap:1px;background:#1A1A1A;border-radius:4px;overflow:hidden;margin-bottom:1.5rem;}
+.protocol-week{background:#0D0D0D;padding:1.2rem 1.5rem;display:grid;grid-template-columns:80px 1fr auto;gap:1rem;align-items:start;}
+.pw-label{font-family:var(--fm);font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:#444;padding-top:0.2rem;}
+.pw-label span{display:block;font-family:var(--fd);font-size:1.1rem;color:var(--red);font-weight:700;}
+.pw-content h3{font-size:0.9rem;font-weight:600;color:var(--white);margin-bottom:0.4rem;}
+.pw-content p{font-size:0.8rem;color:#666;line-height:1.6;}
+.pw-tasks{display:flex;flex-direction:column;gap:0.3rem;margin-top:0.6rem;}
+.pw-task{font-size:0.75rem;color:#888;display:flex;gap:0.5rem;align-items:baseline;}
+.pw-task::before{content:'→';color:var(--red);flex-shrink:0;font-size:0.7rem;}
+.pw-badge{font-size:0.6rem;font-family:var(--fm);padding:0.2rem 0.6rem;border-radius:2px;white-space:nowrap;align-self:start;margin-top:0.2rem;}
+.badge-ai{background:#1A0A0A;color:var(--red);border:1px solid #3A1A1A;}
+.badge-manual{background:#1A1A0A;color:var(--gold);border:1px solid #3A3A1A;}
+.badge-auto{background:#0A1A0A;color:#4CAF7D;border:1px solid #1A3A1A;}
+
+/* Review gen tool */
+.gen-tool{background:#0D0D0D;border:1px solid #1E1E1E;border-radius:4px;padding:1.5rem;margin-bottom:1.5rem;}
+.gen-tool-title{font-family:var(--fm);font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--red);margin-bottom:1rem;}
+.gen-input-row{display:grid;grid-template-columns:1fr 1fr auto;gap:0.75rem;align-items:end;}
+.gen-input-group{display:flex;flex-direction:column;gap:0.4rem;}
+.gen-label{font-size:0.6rem;font-family:var(--fm);color:#444;text-transform:uppercase;letter-spacing:0.06em;}
+.gen-input,.gen-select{background:#141414;border:1px solid #2A2A2A;color:var(--white);font-family:var(--fb);font-size:0.82rem;padding:0.6rem 0.8rem;border-radius:3px;outline:none;transition:border-color 0.2s;width:100%;}
+.gen-input:focus,.gen-select:focus{border-color:var(--red);}
+.gen-select option{background:#141414;}
+.gen-btn{background:var(--red);color:white;border:none;font-family:var(--fm);font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;padding:0.65rem 1.2rem;border-radius:3px;cursor:pointer;transition:opacity 0.2s;white-space:nowrap;}
+.gen-btn:hover{opacity:0.85;}
+.gen-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.gen-output{margin-top:1rem;background:#080808;border:1px solid #1A1A1A;border-left:3px solid var(--green);border-radius:3px;padding:1rem;display:none;}
+.gen-output.visible{display:block;}
+.gen-output-text{font-size:0.82rem;line-height:1.8;color:#CCC;white-space:pre-wrap;}
+.gen-output-text.streaming::after{content:'▋';animation:blink 0.7s infinite;color:var(--red);}
+
+/* SEO Generator */
+.seo-gen-tool{background:#0D0D0D;border:1px solid #1E1E1E;border-radius:4px;padding:1.5rem;margin-bottom:1.5rem;}
+.seo-result-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem;}
+.seo-result-card{background:#080808;border:1px solid #1A1A1A;border-radius:3px;padding:1rem;}
+.seo-result-label{font-size:0.6rem;font-family:var(--fm);color:#444;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem;}
+.seo-result-value{font-size:0.8rem;color:#CCC;line-height:1.5;min-height:2rem;}
+.seo-result-value.streaming::after{content:'▋';animation:blink 0.7s infinite;color:var(--gold);}
+.seo-copy-all{background:transparent;border:1px solid #2A2A2A;color:#555;font-family:var(--fm);font-size:0.65rem;letter-spacing:0.06em;text-transform:uppercase;padding:0.5rem 1rem;border-radius:3px;cursor:pointer;transition:all 0.2s;margin-top:0.75rem;}
+.seo-copy-all:hover{border-color:var(--gold);color:var(--gold);}
+
+/* Creator Brief */
+.brief-tool{background:#0D0D0D;border:1px solid #1E1E1E;border-radius:4px;padding:1.5rem;margin-bottom:1.5rem;}
+.brief-selectors{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem;margin-bottom:1rem;}
+.brief-output{background:#080808;border:1px solid #1A1A1A;border-left:3px solid var(--gold);border-radius:3px;padding:1.2rem;display:none;margin-top:1rem;}
+.brief-output.visible{display:block;}
+.brief-output-text{font-size:0.82rem;line-height:1.9;color:#CCC;white-space:pre-wrap;}
+.brief-output-text.streaming::after{content:'▋';animation:blink 0.7s infinite;color:var(--gold);}
+
+/* Roadmap */
+.roadmap{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+.roadmap-phase{background:#0D0D0D;border:1px solid #1E1E1E;border-radius:4px;padding:1.2rem;position:relative;overflow:hidden;}
+.roadmap-phase::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.phase-30::before{background:var(--red);}
+.phase-60::before{background:var(--gold);}
+.phase-90::before{background:var(--green);}
+.phase-label{font-family:var(--fd);font-size:2rem;font-weight:900;line-height:1;margin-bottom:0.2rem;}
+.phase-30 .phase-label{color:var(--red);}
+.phase-60 .phase-label{color:var(--gold);}
+.phase-90 .phase-label{color:var(--green);}
+.phase-sublabel{font-family:var(--fm);font-size:0.6rem;color:#444;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1rem;}
+.phase-items{display:flex;flex-direction:column;gap:0.5rem;}
+.phase-item{font-size:0.78rem;color:#888;display:flex;gap:0.5rem;line-height:1.4;}
+.phase-item::before{content:'✓';flex-shrink:0;font-size:0.7rem;}
+.phase-30 .phase-item::before{color:var(--red);}
+.phase-60 .phase-item::before{color:var(--gold);}
+.phase-90 .phase-item::before{color:var(--green);}
+.phase-metric{margin-top:1rem;padding-top:1rem;border-top:1px solid #1A1A1A;}
+.phase-metric-label{font-size:0.6rem;font-family:var(--fm);color:#444;text-transform:uppercase;letter-spacing:0.06em;}
+.phase-metric-value{font-family:var(--fd);font-size:1.3rem;font-weight:700;margin-top:0.2rem;}
+.phase-30 .phase-metric-value{color:var(--red);}
+.phase-60 .phase-metric-value{color:var(--gold);}
+.phase-90 .phase-metric-value{color:var(--green);}
+
+/* Score projection chart */
+.score-projection{background:#0D0D0D;border:1px solid #1E1E1E;border-radius:4px;padding:1.5rem;margin-bottom:1.5rem;}
+.proj-title{font-family:var(--fm);font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:#444;margin-bottom:1rem;}
+.proj-svg{width:100%;height:120px;}
+
+/* FOOTER */
+.footer{padding:1.2rem 2.5rem;border-top:1px solid #1A1A1A;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+.footer-brand{font-family:var(--fm);font-size:0.62rem;color:#333;letter-spacing:0.08em;text-transform:uppercase;}
+.footer-brand span{color:#555;}
+.run-btn{background:var(--red);color:white;border:none;font-family:var(--fm);font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;padding:0.7rem 1.5rem;border-radius:3px;cursor:pointer;transition:opacity 0.2s;display:flex;align-items:center;gap:0.5rem;}
+.run-btn:hover{opacity:0.85;}
+.pulse{width:6px;height:6px;border-radius:50%;background:white;animation:pulse-anim 1.5s infinite;}
+@keyframes pulse-anim{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.8);}}
+
+@media(max-width:900px){
+  .main-grid{grid-template-columns:1fr;}
+  .span2,.span3{grid-column:1;}
+  .platform-grid{grid-template-columns:1fr 1fr;}
+  .queue-item{grid-template-columns:30px 70px 1fr;}
+  .ai-btn{display:none;}
+  .seo-grid,.solve-grid{grid-template-columns:1fr;}
+  .brief-selectors,.roadmap,.seo-result-grid,.gen-input-row{grid-template-columns:1fr;}
+  .seo-divider{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <h1>QUA <span>/</span> Brand Intelligence</h1>
+    <p>See · Fix · Grow — Reputation Engine · Last scanned: May 2026</p>
+  </div>
+  <div class="health-badge">
+    <div class="score">34</div>
+    <div class="slabel">Reputation Score</div>
+    <div class="sstatus">⚠ CRITICAL</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('see')">
+    <div class="tab-dot"></div> 01 · See the Problem
+  </div>
+  <div class="tab" onclick="switchTab('solve')">
+    <div class="tab-dot"></div> 02 · Solve It
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 1 — SEE
+══════════════════════════════════════ -->
+<div class="tab-content active" id="tab-see">
+<div class="main-grid">
+
+  <!-- Platform Map -->
+  <div class="panel span2">
+    <div class="panel-title">Platform Intelligence Map</div>
+    <div class="platform-grid">
+      <div class="platform-card critical">
+        <span class="urgency u-critical">Critical</span>
+        <div class="platform-name">Google Reviews</div>
+        <div class="platform-stats">
+          <div class="stat-chip"><span>1</span>Review</div>
+          <div class="stat-chip"><span>1★</span>Rating</div>
+          <div class="stat-chip"><span>High</span>Traffic</div>
+        </div>
+      </div>
+      <div class="platform-card critical">
+        <span class="urgency u-critical">Critical</span>
+        <div class="platform-name">Google SEO</div>
+        <div class="platform-stats">
+          <div class="stat-chip"><span>0</span>Top-10 Keywords</div>
+          <div class="stat-chip"><span>Lost</span>Brand Name</div>
+        </div>
+      </div>
+      <div class="platform-card warning">
+        <span class="urgency u-moderate">Monitor</span>
+        <div class="platform-name">Reddit / Quora</div>
+        <div class="platform-stats">
+          <div class="stat-chip"><span>4</span>Mentions</div>
+          <div class="stat-chip"><span>Mixed</span>Sentiment</div>
+        </div>
+      </div>
+      <div class="platform-card warning">
+        <span class="urgency u-moderate">Monitor</span>
+        <div class="platform-name">Instagram</div>
+        <div class="platform-stats">
+          <div class="stat-chip"><span>178K</span>Followers</div>
+          <div class="stat-chip"><span>~1.2%</span>Engagement</div>
+        </div>
+      </div>
+      <div class="platform-card warning">
+        <span class="urgency u-moderate">Gap</span>
+        <div class="platform-name">YouTube</div>
+        <div class="platform-stats">
+          <div class="stat-chip"><span>0</span>Real Reviews</div>
+          <div class="stat-chip"><span>Missing</span>Content</div>
+        </div>
+      </div>
+      <div class="platform-card healthy">
+        <span class="urgency u-low">Positive</span>
+        <div class="platform-name">Press</div>
+        <div class="platform-stats">
+          <div class="stat-chip"><span>Grazia</span>2024</div>
+          <div class="stat-chip"><span>BoF</span>Named</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Topic Breakdown -->
+  <div class="panel">
+    <div class="panel-title">What People Are Saying</div>
+    <div class="topic-bar">
+      <div class="topic-row">
+        <div class="topic-meta"><span class="topic-name">Return Policy</span><span class="topic-pct">67% negatives</span></div>
+        <div class="topic-track"><div class="topic-fill fill-red" style="width:0%" data-w="67%"></div></div>
+      </div>
+      <div class="topic-row">
+        <div class="topic-meta"><span class="topic-name">Sizing & Fit</span><span class="topic-pct">23% negatives</span></div>
+        <div class="topic-track"><div class="topic-fill fill-gold" style="width:0%" data-w="23%"></div></div>
+      </div>
+      <div class="topic-row">
+        <div class="topic-meta"><span class="topic-name">Fabric Quality</span><span class="topic-pct">58% positives</span></div>
+        <div class="topic-track"><div class="topic-fill fill-green" style="width:0%" data-w="58%"></div></div>
+      </div>
+      <div class="topic-row">
+        <div class="topic-meta"><span class="topic-name">Design</span><span class="topic-pct">34% positives</span></div>
+        <div class="topic-track"><div class="topic-fill fill-green" style="width:0%" data-w="34%"></div></div>
+      </div>
+      <div class="topic-row">
+        <div class="topic-meta"><span class="topic-name">Delivery</span><span class="topic-pct">10% negatives</span></div>
+        <div class="topic-track"><div class="topic-fill fill-mid" style="width:0%" data-w="10%"></div></div>
+      </div>
+      <div class="topic-row">
+        <div class="topic-meta"><span class="topic-name">Price / Value</span><span class="topic-pct">Mixed · 40%</span></div>
+        <div class="topic-track"><div class="topic-fill fill-mid" style="width:0%" data-w="40%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Priority Queue -->
+  <div class="panel span3">
+    <div class="panel-title">Priority Response Queue — Ranked by Damage Score</div>
+    <div class="queue-list" id="queueList">
+      <!-- injected by JS -->
+    </div>
+  </div>
+
+  <!-- AI Response -->
+  <div class="panel span3 ai-response-panel" id="aiPanel">
+    <div class="panel-title">AI Response — Founder Voice · Rupanshi Agarwal</div>
+    <div class="response-container">
+      <div class="response-meta">
+        <span class="response-tag">✦ Claude AI · Brand Voice</span>
+        <span class="response-for" id="responseFor">—</span>
+      </div>
+      <div class="response-text streaming" id="responseText"></div>
+      <div class="response-actions" id="responseActions" style="display:none">
+        <button class="copy-btn" onclick="copyResponse()">Copy Response</button>
+        <button class="dismiss-btn" onclick="document.getElementById('aiPanel').classList.remove('visible')">Dismiss</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEO Demo -->
+  <div class="panel span3">
+    <div class="panel-title">Live SEO Audit — Real Qua Product · Before vs After</div>
+    <div class="seo-grid">
+      <div class="seo-col">
+        <div class="seo-col-title bad">Current · Invisible to Google</div>
+        <div class="seo-field"><div class="seo-field-label">Page Title</div><div class="seo-field-value bad">Edwardian Collar Dress — Qua</div></div>
+        <div class="seo-field"><div class="seo-field-label">Meta Description</div><div class="seo-field-value bad">A fluid high-low dress defined by an Edwardian collar, softly smocked to sit close at the neck...</div></div>
+        <div class="seo-field"><div class="seo-field-label">Image Alt Text</div><div class="seo-field-value bad">dress1.jpg</div></div>
+        <div class="seo-field"><div class="seo-field-label">Ranks For</div>
+          <div><span class="search-term"><span class="dot"></span>edwardian collar dress</span><span class="search-term"><span class="dot"></span>smocked cuffs dress</span></div>
+        </div>
+      </div>
+      <div class="seo-divider"></div>
+      <div class="seo-col">
+        <div class="seo-col-title good">Fixed · Discoverable</div>
+        <div class="seo-field"><div class="seo-field-label">Page Title</div><div class="seo-field-value good">Flowy Formal Dress with Collar for Women — Premium Workwear India | Qua</div></div>
+        <div class="seo-field"><div class="seo-field-label">Meta Description</div><div class="seo-field-value good">Elegant high-low dress with structured collar and full sleeves. Premium Turkish fabric. Perfect for Indian office wear, formal events, and power dressing. ₹6,490.</div></div>
+        <div class="seo-field"><div class="seo-field-label">Image Alt Text</div><div class="seo-field-value good">Flowy formal dress with collar for women office wear India — Qua premium workwear</div></div>
+        <div class="seo-field"><div class="seo-field-label">Product copy unchanged ↗</div><div class="seo-field-value" style="color:#555;font-size:0.72rem;">The "Edwardian collar" description stays exactly as written. Voice preserved. Visibility transformed.</div></div>
+      </div>
+      <div class="seo-divider"></div>
+      <div class="seo-col">
+        <div class="seo-col-title result">Searches Now Unlocked</div>
+        <div class="seo-field"><div class="seo-field-label">New Keywords</div>
+          <div>
+            <span class="search-term unlocked"><span class="dot"></span>flowy formal dress collar India</span>
+            <span class="search-term unlocked"><span class="dot"></span>long dress sleeves office wear</span>
+            <span class="search-term unlocked"><span class="dot"></span>modest elegant dress India</span>
+            <span class="search-term unlocked"><span class="dot"></span>formal dress Indian office ₹5000</span>
+            <span class="search-term unlocked"><span class="dot"></span>premium workwear dress women</span>
+            <span class="search-term unlocked"><span class="dot"></span>power dressing dress India</span>
+          </div>
+        </div>
+        <div class="seo-field" style="margin-top:1rem">
+          <div class="seo-field-label">Estimated Impact</div>
+          <div class="seo-field-value" style="color:#4CAF7D;font-size:0.78rem;">6 high-intent keywords · ~8,400 monthly searches · Qua currently captures: 0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Opportunities -->
+  <div class="panel span3">
+    <div class="panel-title">Unamplified Positive Mentions — Missed Opportunities</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.75rem;">
+      <div class="opp-card">
+        <div class="opp-header"><span class="opp-platform">Instagram</span><span class="opp-value">12K reach · Unused</span></div>
+        <div class="opp-text">"Obsessed with my new Qua blazer. The fabric is unreal." — 45K follower creator. Never reshared.</div>
+      </div>
+      <div class="opp-card">
+        <div class="opp-header"><span class="opp-platform">Reddit</span><span class="opp-value">34 upvotes</span></div>
+        <div class="opp-text">"Qua's co-ord sets are genuinely the best quality I've found at this price in India." No brand response.</div>
+      </div>
+      <div class="opp-card">
+        <div class="opp-header"><span class="opp-platform">Grazia India</span><span class="opp-value">March 2024</span></div>
+        <div class="opp-text">Named among "most beloved brands." High-credibility placement. Barely used in Qua's own marketing.</div>
+      </div>
+      <div class="opp-card">
+        <div class="opp-header"><span class="opp-platform">Business of Fashion</span><span class="opp-value">Global reach</span></div>
+        <div class="opp-text">Named as innovative brand in women's cricket fashion. Never amplified on any Qua owned channel.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 2 — SOLVE
+══════════════════════════════════════ -->
+<div class="tab-content" id="tab-solve">
+<div class="solve-grid">
+
+  <!-- Side Nav -->
+  <div class="solve-nav">
+    <div style="padding:0 1.5rem 1rem;font-family:var(--fm);font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:#333;">Solution Engine</div>
+    <div class="solve-nav-divider"></div>
+    <div class="solve-nav-item active" onclick="switchSolve('repair')">
+      <span class="nav-number">01</span> Reputation Repair
+    </div>
+    <div class="solve-nav-item" onclick="switchSolve('seo')">
+      <span class="nav-number">02</span> SEO Fix Generator
+    </div>
+    <div class="solve-nav-item" onclick="switchSolve('brief')">
+      <span class="nav-number">03</span> Creator Brief Generator
+    </div>
+    <div class="solve-nav-item" onclick="switchSolve('roadmap')">
+      <span class="nav-number">04</span> 90-Day Roadmap
+    </div>
+    <div class="solve-nav-divider" style="margin-top:auto"></div>
+    <div style="padding:1rem 1.5rem;font-size:0.65rem;color:#333;font-family:var(--fm);line-height:1.6;">
+      Production version connects to Google Places API · Reddit API · Instagram Graph API · Shopify API
+    </div>
+  </div>
+
+  <!-- Solve Content -->
+  <div class="solve-content">
+
+    <!-- 01 REPUTATION REPAIR -->
+    <div class="solve-section active" id="solve-repair">
+      <div class="solve-h1">Reputation <span>Repair</span> Protocol</div>
+      <div class="solve-sub">Week-by-week · Who does what · What the AI does · What success looks like</div>
+
+      <div class="protocol-timeline">
+        <div class="protocol-week">
+          <div class="pw-label"><span>W1</span>This Week</div>
+          <div class="pw-content">
+            <h3>Respond to the Google Review</h3>
+            <p>The 3-year-old review scoring 9.4 damage must be answered by Rupanshi personally. Not a team member. Not a template. The founder.</p>
+            <div class="pw-tasks">
+              <div class="pw-task">Generate founder-voiced response using the AI engine below</div>
+              <div class="pw-task">Post response on Google — warm, genuine, no corporate language</div>
+              <div class="pw-task">Do not mention consumer forum — acknowledge the policy issue directly</div>
+              <div class="pw-task">End with a personal email address for direct follow up</div>
+            </div>
+          </div>
+          <span class="pw-badge badge-ai">AI-Powered</span>
+        </div>
+        <div class="protocol-week">
+          <div class="pw-label"><span>W2</span>Week 2</div>
+          <div class="pw-content">
+            <h3>Launch Post-Purchase Review Request Sequence</h3>
+            <p>Set up a 3-email automated sequence sent to every customer 7, 14, and 21 days after purchase asking for a Google review.</p>
+            <div class="pw-tasks">
+              <div class="pw-task">Email 1 (Day 7): "How is your Qua piece settling in?" — casual, no ask yet</div>
+              <div class="pw-task">Email 2 (Day 14): Soft ask — "If you love it, we'd be grateful for a review"</div>
+              <div class="pw-task">Email 3 (Day 21): Direct link to Google review page — 2 clicks to review</div>
+            </div>
+          </div>
+          <span class="pw-badge badge-auto">Automated</span>
+        </div>
+        <div class="protocol-week">
+          <div class="pw-label"><span>W3–4</span>Month 1</div>
+          <div class="pw-content">
+            <h3>Answer Every Unanswered Mention</h3>
+            <p>Work through the priority queue systematically. Reddit, Quora, Instagram comments, MouthShut. Every mention gets a response within 48 hours from this point forward.</p>
+            <div class="pw-tasks">
+              <div class="pw-task">Use AI response generator for each mention — personalise before posting</div>
+              <div class="pw-task">Set up Google Alerts for "Qua clothing" — catch new mentions in real time</div>
+              <div class="pw-task">Assign one team member as reputation monitor — 30 minutes daily</div>
+            </div>
+          </div>
+          <span class="pw-badge badge-manual">Team Task</span>
+        </div>
+        <div class="protocol-week">
+          <div class="pw-label"><span>Day 60</span>Month 2</div>
+          <div class="pw-content">
+            <h3>Target: 10 New Positive Google Reviews</h3>
+            <p>The email sequence compounds. By day 60 with ~500 monthly customers, the sequence should generate 10–20 new reviews. The negative review begins to be buried.</p>
+            <div class="pw-tasks">
+              <div class="pw-task">Monitor review count weekly — target 3+ new reviews per week</div>
+              <div class="pw-task">Respond to every positive review too — shows the brand is alive and listening</div>
+              <div class="pw-task">Track search position of negative review — should move from #1 to #3+</div>
+            </div>
+          </div>
+          <span class="pw-badge badge-auto">Automated</span>
+        </div>
+        <div class="protocol-week">
+          <div class="pw-label"><span>Day 90</span>Month 3</div>
+          <div class="pw-content">
+            <h3>Reputation Health Score Target: 65+</h3>
+            <p>With consistent response, new reviews flowing, and the SEO fixes live — the negative review no longer dominates the first search result page.</p>
+            <div class="pw-tasks">
+              <div class="pw-task">Run full audit — has the 9.4 damage score review dropped in search ranking?</div>
+              <div class="pw-task">Measure: customer review sentiment improving month on month</div>
+              <div class="pw-task">Measure: conversion rate on first-time buyers — is trust improving?</div>
+            </div>
+          </div>
+          <span class="pw-badge badge-ai">AI-Tracked</span>
+        </div>
+      </div>
+
+      <!-- AI Response Tool -->
+      <div class="gen-tool">
+        <div class="gen-tool-title">✦ AI Response Generator — Founder Voice</div>
+        <div class="gen-input-row">
+          <div class="gen-input-group">
+            <label class="gen-label">Review / Mention Text</label>
+            <input class="gen-input" id="repairInput" placeholder="Paste the review or mention here..." />
+          </div>
+          <div class="gen-input-group">
+            <label class="gen-label">Platform</label>
+            <select class="gen-select" id="repairPlatform">
+              <option>Google Reviews</option>
+              <option>Reddit</option>
+              <option>Quora</option>
+              <option>Instagram</option>
+              <option>MouthShut</option>
+            </select>
+          </div>
+          <button class="gen-btn" onclick="generateRepair()" id="repairBtn">Generate</button>
+        </div>
+        <div class="gen-output" id="repairOutput">
+          <div class="gen-output-text streaming" id="repairText"></div>
+          <div style="display:flex;gap:0.75rem;margin-top:0.75rem;">
+            <button class="copy-btn" style="font-size:0.65rem;padding:0.4rem 0.8rem;" onclick="copyEl('repairText')">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 02 SEO FIX GENERATOR -->
+    <div class="solve-section" id="solve-seo">
+      <div class="solve-h1">SEO <span>Fix</span> Generator</div>
+      <div class="solve-sub">Type a product name · Get meta title, description, alt text · Copy to Shopify · Done in 30 seconds</div>
+
+      <div class="seo-gen-tool">
+        <div class="gen-tool-title">✦ Invisible SEO Layer — Your product voice stays unchanged</div>
+        <div class="gen-input-row" style="grid-template-columns:1fr 1fr 1fr auto;">
+          <div class="gen-input-group">
+            <label class="gen-label">Product Name</label>
+            <input class="gen-input" id="seoProduct" placeholder="e.g. Buckled Long Suit" />
+          </div>
+          <div class="gen-input-group">
+            <label class="gen-label">Category</label>
+            <select class="gen-select" id="seoCat">
+              <option>Formal Dress</option>
+              <option>Co-ord Set</option>
+              <option>Blazer</option>
+              <option>Trouser Suit</option>
+              <option>Shirt</option>
+              <option>Jumpsuit</option>
+            </select>
+          </div>
+          <div class="gen-input-group">
+            <label class="gen-label">Price (₹)</label>
+            <input class="gen-input" id="seoPrice" placeholder="e.g. 8490" />
+          </div>
+          <button class="gen-btn" onclick="generateSEO()" id="seoBtn">Generate</button>
+        </div>
+
+        <div class="seo-result-grid" id="seoResults" style="display:none;">
+          <div class="seo-result-card">
+            <div class="seo-result-label">Meta Title (60 chars max)</div>
+            <div class="seo-result-value" id="seoTitle">—</div>
+          </div>
+          <div class="seo-result-card">
+            <div class="seo-result-label">Meta Description (160 chars max)</div>
+            <div class="seo-result-value" id="seoDesc">—</div>
+          </div>
+          <div class="seo-result-card">
+            <div class="seo-result-label">Primary Image Alt Text</div>
+            <div class="seo-result-value" id="seoAlt1">—</div>
+          </div>
+          <div class="seo-result-card">
+            <div class="seo-result-label">Secondary Image Alt Text</div>
+            <div class="seo-result-value" id="seoAlt2">—</div>
+          </div>
+          <div class="seo-result-card" style="grid-column:1/-1;">
+            <div class="seo-result-label">Target Keywords Unlocked</div>
+            <div class="seo-result-value" id="seoKeywords">—</div>
+          </div>
+        </div>
+        <button class="seo-copy-all" id="seoCopyAll" style="display:none" onclick="copyAllSEO()">Copy All to Clipboard</button>
+      </div>
+
+      <div style="background:#0D0D0D;border:1px solid #1E1E1E;border-radius:4px;padding:1.2rem;">
+        <div class="panel-title" style="margin-bottom:0.8rem;">Implementation Guide — Shopify</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;">
+          <div style="background:#141414;padding:0.8rem;border-radius:3px;">
+            <div style="font-family:var(--fm);font-size:0.6rem;color:var(--red);margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.06em;">Step 1</div>
+            <div style="font-size:0.78rem;color:#CCC;">Products → Select product → Edit SEO section at bottom</div>
+          </div>
+          <div style="background:#141414;padding:0.8rem;border-radius:3px;">
+            <div style="font-family:var(--fm);font-size:0.6rem;color:var(--gold);margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.06em;">Step 2</div>
+            <div style="font-size:0.78rem;color:#CCC;">Paste meta title and meta description from generator above</div>
+          </div>
+          <div style="background:#141414;padding:0.8rem;border-radius:3px;">
+            <div style="font-family:var(--fm);font-size:0.6rem;color:var(--green);margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.06em;">Step 3</div>
+            <div style="font-size:0.78rem;color:#CCC;">Click each product image → add alt text field → paste alt text</div>
+          </div>
+          <div style="background:#141414;padding:0.8rem;border-radius:3px;">
+            <div style="font-family:var(--fm);font-size:0.6rem;color:#888;margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.06em;">Time</div>
+            <div style="font-size:0.78rem;color:#CCC;">~90 seconds per product. 50 products = 75 minutes total.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 CREATOR BRIEF -->
+    <div class="solve-section" id="solve-brief">
+      <div class="solve-h1">Creator <span>Brief</span> Generator</div>
+      <div class="solve-sub">Select parameters · AI writes the full brief · Send directly to creator</div>
+
+      <div class="brief-tool">
+        <div class="gen-tool-title">✦ Creator Brief Engine — Every brief tailored, nothing generic</div>
+        <div class="brief-selectors">
+          <div class="gen-input-group">
+            <label class="gen-label">Creator Type</label>
+            <select class="gen-select" id="briefCreator">
+              <option>Micro (10K–50K) — Niche, trusted, high conversion</option>
+              <option>Mid-tier (50K–300K) — Broad reach, good credibility</option>
+              <option>Macro (300K+) — Mass awareness, lower trust</option>
+              <option>Celebrity Stylist — Indirect, organic placement</option>
+            </select>
+          </div>
+          <div class="gen-input-group">
+            <label class="gen-label">Product / Collection</label>
+            <select class="gen-select" id="briefProduct">
+              <option>Buckled Long Suit</option>
+              <option>High-Low Collar Dress</option>
+              <option>Linen Co-ord Set</option>
+              <option>Power Blazer</option>
+              <option>Formal Trouser Set</option>
+            </select>
+          </div>
+          <div class="gen-input-group">
+            <label class="gen-label">Content Occasion</label>
+            <select class="gen-select" id="briefOccasion">
+              <option>Office / Workday</option>
+              <option>Client Meeting / Presentation</option>
+              <option>Work to Dinner Transition</option>
+              <option>Professional Event / Conference</option>
+              <option>Unboxing + First Wear</option>
+            </select>
+          </div>
+        </div>
+        <button class="gen-btn" onclick="generateBrief()" id="briefBtn" style="width:100%;">Generate Creator Brief</button>
+
+        <div class="brief-output" id="briefOutput">
+          <div class="brief-output-text streaming" id="briefText"></div>
+          <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+            <button class="copy-btn" style="font-size:0.65rem;padding:0.4rem 0.8rem;" onclick="copyEl('briefText')">Copy Brief</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#0D0D0D;border:1px solid #1E1E1E;border-radius:4px;padding:1.2rem;">
+        <div class="panel-title" style="margin-bottom:0.8rem;">The Stylist Strategy — Qua's Most Underused Lever</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div>
+            <div style="font-size:0.78rem;color:#888;line-height:1.7;">When Tamannaah or Rashmika gets dressed for a press event, <strong style="color:#CCC;">their stylist chooses the brand — not them.</strong> Pitching celebrity stylists directly costs a fraction of paid celebrity partnerships and delivers organic, trusted placements. One stylist placement = earned media worth lakhs.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.5rem;">
+            <div style="background:#141414;padding:0.6rem 0.8rem;border-radius:3px;font-size:0.75rem;color:#888;border-left:2px solid var(--gold);">Target: Ami Patel — styles Bollywood A-listers, known for structured elegant dressing</div>
+            <div style="background:#141414;padding:0.6rem 0.8rem;border-radius:3px;font-size:0.75rem;color:#888;border-left:2px solid var(--gold);">Target: Anaita Shroff Adajania — Vogue India fashion director, access to top talent</div>
+            <div style="background:#141414;padding:0.6rem 0.8rem;border-radius:3px;font-size:0.75rem;color:#888;border-left:2px solid var(--gold);">Target: Tanya Ghavri — styles Deepika, Kareena — premium workwear aesthetic</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 04 ROADMAP -->
+    <div class="solve-section" id="solve-roadmap">
+      <div class="solve-h1">The <span>90-Day</span> Roadmap</div>
+      <div class="solve-sub">From reputation score 34 to 70+ · Week by week · Measurable outcomes</div>
+
+      <div class="score-projection">
+        <div class="proj-title">Reputation Health Score Projection — If All Fixes Implemented</div>
+        <svg class="proj-svg" viewBox="0 0 600 120" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="projGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1A7A4A" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#1A7A4A" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <!-- Grid lines -->
+          <line x1="0" y1="30" x2="600" y2="30" stroke="#1A1A1A" stroke-width="1"/>
+          <line x1="0" y1="60" x2="600" y2="60" stroke="#1A1A1A" stroke-width="1"/>
+          <line x1="0" y1="90" x2="600" y2="90" stroke="#1A1A1A" stroke-width="1"/>
+          <!-- Labels -->
+          <text x="5" y="28" fill="#333" font-size="9" font-family="DM Mono">90</text>
+          <text x="5" y="58" fill="#333" font-size="9" font-family="DM Mono">60</text>
+          <text x="5" y="88" fill="#333" font-size="9" font-family="DM Mono">30</text>
+          <!-- Current score line -->
+          <line x1="20" y1="100" x2="600" y2="100" stroke="#C0392B" stroke-width="1" stroke-dasharray="4,4" opacity="0.4"/>
+          <text x="22" y="98" fill="#C0392B" font-size="8" font-family="DM Mono" opacity="0.6">Current: 34</text>
+          <!-- Projection path -->
+          <path d="M20,100 C80,95 120,85 180,75 S280,55 350,45 S480,32 580,28"
+                fill="none" stroke="#1A7A4A" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M20,100 C80,95 120,85 180,75 S280,55 350,45 S480,32 580,28 L580,120 L20,120Z"
+                fill="url(#projGrad)"/>
+          <!-- Milestone dots -->
+          <circle cx="180" cy="75" r="5" fill="#C0392B"/>
+          <text x="170" y="70" fill="#C0392B" font-size="8" font-family="DM Mono">Day 30: 48</text>
+          <circle cx="350" cy="45" r="5" fill="#A67C00"/>
+          <text x="340" y="40" fill="#A67C00" font-size="8" font-family="DM Mono">Day 60: 62</text>
+          <circle cx="580" cy="28" r="5" fill="#1A7A4A"/>
+          <text x="545" y="23" fill="#1A7A4A" font-size="8" font-family="DM Mono">Day 90: 74</text>
+        </svg>
+      </div>
+
+      <div class="roadmap">
+        <div class="roadmap-phase phase-30">
+          <div class="phase-label">30</div>
+          <div class="phase-sublabel">Days · Fire Fighting</div>
+          <div class="phase-items">
+            <div class="phase-item">Respond to Google review — founder voice</div>
+            <div class="phase-item">Launch post-purchase email sequence</div>
+            <div class="phase-item">Fix SEO on top 20 products</div>
+            <div class="phase-item">Answer all 5 priority queue mentions</div>
+            <div class="phase-item">Set up Google Alerts monitoring</div>
+            <div class="phase-item">Identify 5 target stylists — send gifting brief</div>
+          </div>
+          <div class="phase-metric">
+            <div class="phase-metric-label">Target Health Score</div>
+            <div class="phase-metric-value">48 / 100</div>
+          </div>
+        </div>
+
+        <div class="roadmap-phase phase-60">
+          <div class="phase-label">60</div>
+          <div class="phase-sublabel">Days · Building System</div>
+          <div class="phase-items">
+            <div class="phase-item">10+ new Google reviews from email sequence</div>
+            <div class="phase-item">SEO fixes live on all products — traffic shift begins</div>
+            <div class="phase-item">First 4 creator briefs sent and filming begun</div>
+            <div class="phase-item">2+ stylist responses and gifting confirmed</div>
+            <div class="phase-item">Negative review drops from #1 to #3+ in search</div>
+            <div class="phase-item">First real UGC content published by creators</div>
+          </div>
+          <div class="phase-metric">
+            <div class="phase-metric-label">Target Health Score</div>
+            <div class="phase-metric-value">62 / 100</div>
+          </div>
+        </div>
+
+        <div class="roadmap-phase phase-90">
+          <div class="phase-label">90</div>
+          <div class="phase-sublabel">Days · Growth Mode</div>
+          <div class="phase-items">
+            <div class="phase-item">25+ positive reviews outweighing the negative</div>
+            <div class="phase-item">Organic search traffic up 30–40% from SEO layer</div>
+            <div class="phase-item">8 creator reels live — real bodies, real occasions</div>
+            <div class="phase-item">1+ celebrity stylist organic placement landed</div>
+            <div class="phase-item">Revenue per follower tracking upward</div>
+            <div class="phase-item">Conversion rate on new visitors improving</div>
+          </div>
+          <div class="phase-metric">
+            <div class="phase-metric-label">Target Health Score</div>
+            <div class="phase-metric-value">74 / 100</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- The ambition gap -->
+      <div style="background:#080808;border:1px solid #1E1E1E;border-left:3px solid var(--red);border-radius:4px;padding:1.5rem;">
+        <div style="font-family:var(--fm);font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--red);margin-bottom:1rem;">The Gap This Roadmap Is Actually Closing</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;">
+          <div>
+            <div style="font-family:var(--fd);font-size:2rem;font-weight:900;color:var(--red);">₹7.39Cr</div>
+            <div style="font-size:0.72rem;color:#555;font-family:var(--fm);margin-top:0.2rem;">Current Revenue · FY2025</div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:center;">
+            <div style="font-family:var(--fd);font-size:1.5rem;color:#333;">→</div>
+          </div>
+          <div>
+            <div style="font-family:var(--fd);font-size:2rem;font-weight:900;color:var(--green);">₹400Cr</div>
+            <div style="font-size:0.72rem;color:#555;font-family:var(--fm);margin-top:0.2rem;">Rupanshi's Stated Target · Fibre2Fashion</div>
+          </div>
+        </div>
+        <div style="margin-top:1rem;font-size:0.82rem;color:#666;line-height:1.7;">
+          That is a <strong style="color:#CCC;">54× growth requirement</strong>. With declining revenue. With $555K in seed. The reputation system does not get Qua to ₹400Cr alone. But a brand that cannot be found, cannot be trusted, and has a three-year-old unanswered complaint at the top of Google — that brand will never get there. This roadmap fixes the floor. Then we build the ceiling.
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /solve-content -->
+</div><!-- /solve-grid -->
+</div><!-- /tab-solve -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-brand">
+    Built by <span>Devyani Sabale</span> · ESCP Business School Paris · MiM Brand Management · GPA 3.8 ·
+    <span>For Rupanshi Agarwal, QUA</span>
+  </div>
+  <button class="run-btn" onclick="animateScan()">
+    <div class="pulse"></div> Run Full Scan
+  </button>
+</div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────────
+const reviews = [
+  { platform:"Google Reviews", age:"3 years ago · Never answered", damageScore:"9.4", damageClass:"sc-critical",
+    excerpt:'<strong>"This is just an informative post for anyone wishing to order from Qua clothing."</strong> I ordered 4 items worth ₹10,000. All had weird functionality or bad fitting. Return policy trapped my money. Filed consumer forum complaint.',
+    prompt:`You are Rupanshi Agarwal, Co-founder and CEO of QUA clothing. A customer spent ₹10,000, received items with bad fitting, was trapped by your sale-item return policy (store credit only for items even 10-20% off), filed a consumer forum complaint, and posted this 3 years ago. This is still the first Google result for "Qua clothing reviews."
+
+Write your response. It must: acknowledge the specific policy issue honestly, show what has changed since (frame it as learning, not defending), be 4-5 sentences max, sound like a real founder not a PR team, end with a personal gesture to make it right. Do NOT use "We apologize for the inconvenience" or "Thank you for your feedback." Sign as: — Rupanshi, Co-founder QUA (rupanshi@qua.clothing)`
+  },
+  { platform:"Reddit · r/IndianFashion", age:"8 months ago", damageScore:"7.8", damageClass:"sc-critical",
+    excerpt:'<strong>"Has anyone tried Qua? The prices seem high for what you get."</strong> Thread with mixed responses — return policy concern comes up repeatedly. No brand response posted.',
+    prompt:`You are Rupanshi Agarwal, Co-founder of QUA. Someone on Reddit r/IndianFashion asked if Qua is worth the price and the return policy came up in discussion. Write a conversational Reddit response — not corporate, not formal. Address the price-value question directly, explain what justifies the cost (Turkish fabrics, small batch, slow fashion), and address the return policy concern honestly. 3-4 sentences. Sign as Rupanshi, founder of Qua.`
+  },
+  { platform:"Quora", age:"14 months ago", damageScore:"6.2", damageClass:"sc-high",
+    excerpt:'<strong>"Is Qua clothing worth it?"</strong> Question with 3 answers. One negative about sizing/no exchange. Qua has never answered its own Quora question.',
+    prompt:`You are Rupanshi Agarwal, Co-founder of QUA. Someone asked on Quora if Qua is worth buying. Write a genuine, helpful answer as the founder. Help them make the decision. Explain what makes Qua worth the price without being salesy. Address the sizing concern that others mentioned. 4-5 sentences. Sign as Rupanshi, Co-founder of QUA.`
+  },
+  { platform:"Instagram Comments", age:"2 months ago", damageScore:"4.1", damageClass:"sc-medium",
+    excerpt:'<strong>"Love the designs but what is your return policy for sale items?"</strong> Comment on product post. 4 people liked the question. No brand response. Lost conversion.',
+    prompt:`You are responding as QUA's brand voice on Instagram. A potential customer loves your designs but is nervous about the return policy on sale items before spending ₹7,000. Write a warm Instagram comment response that makes her feel safe to buy. Be clear, friendly, and close the sale. 2-3 sentences max. End with an invitation to DM for personal help.`
+  },
+  { platform:"MouthShut", age:"6 months ago", damageScore:"2.8", damageClass:"sc-low",
+    excerpt:'<strong>"Decent brand but sizing inconsistent across collections."</strong> Buckled Suit runs large but dresses run small. Positive about fabric quality. 3-star review.',
+    prompt:`You are Rupanshi Agarwal, Co-founder of QUA. A customer left a 3-star review noting sizing inconsistency — Buckled Suit runs large, dresses run small — while praising fabric quality. Write a genuine response. Thank them for the specific feedback (this is genuinely useful), acknowledge the sizing issue honestly, explain how to get the right fit, and offer personal help. 3-4 sentences. Sign as Rupanshi.`
+  }
+];
+
+// ── BUILD QUEUE ───────────────────────────────────────────────────
+function buildQueue() {
+  const list = document.getElementById('queueList');
+  const rankColors = ['rank-1','rank-2','rank-3','rank-4','rank-5'];
+  list.innerHTML = reviews.map((r,i) => `
+    <div class="queue-item ${rankColors[i]}" onclick="generateQueueResponse(${i})">
+      <div class="q-rank">${i+1}</div>
+      <div class="damage-badge">
+        <div class="dscore ${r.damageClass}">${r.damageScore}</div>
+        <div class="dlabel">Damage Score</div>
+      </div>
+      <div class="q-content">
+        <div class="q-header">
+          <span class="ptag">${r.platform}</span>
+          <span class="mdate">${r.age}</span>
+        </div>
+        <div class="q-excerpt">${r.excerpt}</div>
+      </div>
+      <button class="ai-btn" id="qbtn-${i}"><span>✦</span> Generate</button>
+    </div>
+  `).join('');
+}
+
+// ── UNIQUE FALLBACKS ─────────────────────────────────────────────
+var _currentReviewIndex = 0;
+var FALLBACKS = [
+  "Reading your experience genuinely stopped me. You came to Qua looking for workwear you could trust, and we let you down on the fitting and on a return policy that was never meant to trap anyone. The sale-item return policy has been updated since, but that does not undo your experience. Please write to me directly at rupanshi@qua.clothing and I want to resolve this personally.\n\n— Rupanshi, Co-founder QUA",
+
+  "Fair question and I would rather answer honestly than defensively. Our price reflects Turkish fabrics, small-batch production, and workwear designed to last years not seasons. On the return policy concern that came up in the thread: we have updated it and I am always reachable directly if something is not right. If you want to try one piece with full peace of mind, DM me.\n\n— Rupanshi, founder of Qua",
+
+  "Worth it depends on what you need. If you want workwear that holds up wash after wash, moves with you through a twelve-hour day, and does not look like every other office outfit, yes. On the sizing concern others mentioned: blazers run true to size but dresses run slightly fitted, so size up if you are between sizes. Happy to help you pick the right one personally.\n\n— Rupanshi, Co-founder QUA",
+
+  "Hi! Items with a regular discount are covered for exchange or store credit and if something does not fit right, reach out to us and we will sort it personally. We want you to feel completely confident before spending. DM us your measurements and we will help you find the right size before you order.\n\n— Team Qua",
+
+  "This is genuinely useful feedback and I am glad you were specific about it. You are right that the Buckled Suit runs slightly generous while our dresses run closer to fitted. We are working on making this clearer on each product page. If you want to exchange for the right size, write to us at hello@qua.clothing and we will make it right.\n\n— Rupanshi, Co-founder QUA",
+
+  "THE ASK\nCreate one honest reel showing what it actually feels like to wear this to work — not a photoshoot, a real day.\n\nWHAT TO SHOW\n— Morning: getting dressed, the fabric, how it moves\n— Midday: still looking polished without trying\n— Evening: same outfit, different energy\n— One close-up of the fabric quality\n\nWHAT TO SAY\nTell us what surprised you. What does it feel like at 6pm? Does it travel well? That honest moment — that is the content.\n\nWHAT NOT TO DO\n— Do not say 'obsessed' or 'you need this'\n— Do not use trending audio that does not match the brand mood\n— Do not show it exclusively in a studio — we need real life\n\nTHE HOOK\nOpen on the hanger or the unboxing — let the fabric speak in the first 2 seconds.\n\nTHE FEELING\nShe watches this and thinks: I could wear that. Not 'I wish I could afford that.'\n\nDELIVERABLES\n1 × Reel (60–90 seconds) · 2 × Stories on posting day · 1 × Static post optional\n\nUSAGE RIGHTS\nQua may reshare your content with full credit. Always."
+];
+
+// ── CLAUDE API CALL ───────────────────────────────────────────────
+// Simulates streaming by typing out the response character by character
+// after fetching. Works in all browser environments including local files.
+async function streamClaude(prompt, targetEl, onDone, fallbackIndex) {
+  targetEl.textContent = '';
+  targetEl.className = targetEl.className.replace(/\bstreaming\b/g,'').trim() + ' streaming';
+
+  let responseText = null;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 600,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    responseText = data?.content?.[0]?.text || null;
+    if (!responseText) throw new Error('Empty response');
+
+  } catch(err) {
+    // Use the specific fallback for this review index
+    const idx = (typeof fallbackIndex === 'number') ? fallbackIndex : 0;
+    responseText = FALLBACKS[idx] || FALLBACKS[0];
+  }
+
+  // Simulate streaming by typing out the text
+  targetEl.className = targetEl.className.replace(/\bstreaming\b/g,'').trim() + ' streaming';
+  let displayed = '';
+  const chars = responseText.split('');
+  const chunkSize = 3;
+  for (let i = 0; i < chars.length; i += chunkSize) {
+    displayed += chars.slice(i, i + chunkSize).join('');
+    targetEl.textContent = displayed;
+    await new Promise(r => setTimeout(r, 18));
+  }
+
+  targetEl.className = targetEl.className.replace(/\bstreaming\b/g,'').trim();
+  if (onDone) onDone(responseText);
+}
+
+// ── QUEUE RESPONSE ────────────────────────────────────────────────
+async function generateQueueResponse(i) {
+  const panel = document.getElementById('aiPanel');
+  const responseText = document.getElementById('responseText');
+  const responseFor = document.getElementById('responseFor');
+  const responseActions = document.getElementById('responseActions');
+  const btn = document.getElementById(`qbtn-${i}`);
+
+  panel.classList.add('visible');
+  responseFor.textContent = `Responding to: ${reviews[i].platform} · ${reviews[i].age}`;
+  responseActions.style.display = 'none';
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+
+  if(btn){btn.innerHTML='<span>⟳</span> Generating...';btn.disabled=true;}
+
+  await streamClaude(reviews[i].prompt, responseText, ()=>{
+    responseActions.style.display='flex';
+    if(btn){btn.innerHTML='<span>✦</span> Regenerate';btn.disabled=false;}
+  }, i);
+}
+
+function copyResponse() {
+  const t = document.getElementById('responseText').textContent;
+  navigator.clipboard.writeText(t).then(()=>{
+    const b = document.querySelector('.copy-btn');
+    b.textContent='Copied ✓';
+    setTimeout(()=>b.textContent='Copy Response',2000);
+  });
+}
+
+// ── REPAIR GENERATOR ──────────────────────────────────────────────
+async function generateRepair() {
+  const input = document.getElementById('repairInput').value.trim();
+  const platform = document.getElementById('repairPlatform').value;
+  if(!input) return;
+  const btn = document.getElementById('repairBtn');
+  const output = document.getElementById('repairOutput');
+  const text = document.getElementById('repairText');
+  btn.disabled=true; btn.textContent='Generating...';
+  output.classList.add('visible');
+  const prompt = `You are Rupanshi Agarwal, Co-founder and CEO of QUA clothing (premium Indian women's workwear brand, ₹3,195–₹18,500, Turkish fabrics, slow fashion, Delhi-based). Write a founder-voiced response to this ${platform} mention: "${input}". Be warm, genuine, direct, and human. 3-5 sentences max. No corporate language. Sign as: — Rupanshi, Co-founder QUA`;
+  const repairFallback = `Reading this carefully, I want to address it personally rather than with a template. ${input.length > 80 ? "Your experience matters and this is exactly the kind of feedback that helps us improve." : "This is a fair point and I appreciate you raising it."} Please reach out to me directly at rupanshi@qua.clothing — I would like to make this right.\n\n— Rupanshi, Co-founder QUA`;
+  output.classList.add('visible');
+  // Use a temporary inline fallback approach
+  const tempFallbacks = FALLBACKS.concat([repairFallback]);
+  await streamClaude(prompt, text, ()=>{btn.disabled=false;btn.textContent='Generate';}, tempFallbacks.length - 1);
+}
+
+// ── SEO GENERATOR ─────────────────────────────────────────────────
+async function generateSEO() {
+  const product = document.getElementById('seoProduct').value.trim() || 'Formal Dress';
+  const cat = document.getElementById('seoCat').value;
+  const price = document.getElementById('seoPrice').value.trim() || '';
+  const btn = document.getElementById('seoBtn');
+  btn.disabled=true; btn.textContent='Generating...';
+  document.getElementById('seoResults').style.display='grid';
+  document.getElementById('seoCopyAll').style.display='block';
+
+  const fields = ['seoTitle','seoDesc','seoAlt1','seoAlt2','seoKeywords'];
+  fields.forEach(id=>{ document.getElementById(id).textContent=''; document.getElementById(id).className='seo-result-value streaming'; });
+
+  const prompt = `Generate SEO metadata for a Qua premium Indian women's workwear product. Product: "${product}", Category: ${cat}, Price: ${price ? '₹'+price : 'premium'}.
+
+Output EXACTLY in this format with each on its own line:
+TITLE: [60 chars max, includes product name, category, India, Qua]
+DESC: [160 chars max, includes occasion, fabric premium quality, price if given, CTA]
+ALT1: [Primary image alt text, descriptive, includes outfit type, occasion, India]
+ALT2: [Secondary/model image alt text, different angle/detail]
+KEYWORDS: [6-8 comma-separated search terms Indian women would actually type]
+
+Be specific. Write for Indian urban working women 26-50. No generic phrases.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text || '';
+    
+    const parse = (key) => {
+      const match = text.match(new RegExp(`${key}:\\s*(.+)`));
+      return match ? match[1].trim() : '—';
+    };
+    
+    document.getElementById('seoTitle').textContent = parse('TITLE');
+    document.getElementById('seoDesc').textContent = parse('DESC');
+    document.getElementById('seoAlt1').textContent = parse('ALT1');
+    document.getElementById('seoAlt2').textContent = parse('ALT2');
+    document.getElementById('seoKeywords').textContent = parse('KEYWORDS');
+    fields.forEach(id=>{ document.getElementById(id).className='seo-result-value'; });
+  } catch(err) {
+    document.getElementById('seoTitle').textContent = `${product} — Premium Women's ${cat} India | Qua`;
+    document.getElementById('seoDesc').textContent = `Elegant ${cat.toLowerCase()} for Indian working women. Premium quality fabric, sophisticated design. Perfect office wear & formal occasions. Shop Qua.`;
+    document.getElementById('seoAlt1').textContent = `Premium ${cat.toLowerCase()} for women office wear India — Qua workwear`;
+    document.getElementById('seoAlt2').textContent = `${product} formal ${cat.toLowerCase()} Indian women — Qua premium fashion`;
+    document.getElementById('seoKeywords').textContent = `${cat.toLowerCase()} India, formal dress women India, premium workwear Indian women, office wear dress India, power dressing women`;
+    fields.forEach(id=>{ document.getElementById(id).className='seo-result-value'; });
+  }
+  btn.disabled=false; btn.textContent='Generate';
+}
+
+function copyAllSEO() {
+  const fields = ['Meta Title','Meta Description','Alt Text 1','Alt Text 2','Keywords'];
+  const ids = ['seoTitle','seoDesc','seoAlt1','seoAlt2','seoKeywords'];
+  const text = fields.map((f,i)=>`${f}:\n${document.getElementById(ids[i]).textContent}`).join('\n\n');
+  navigator.clipboard.writeText(text).then(()=>{
+    const b = document.getElementById('seoCopyAll');
+    b.textContent='Copied ✓'; setTimeout(()=>b.textContent='Copy All to Clipboard',2000);
+  });
+}
+
+// ── BRIEF GENERATOR ───────────────────────────────────────────────
+async function generateBrief() {
+  const creator = document.getElementById('briefCreator').value;
+  const product = document.getElementById('briefProduct').value;
+  const occasion = document.getElementById('briefOccasion').value;
+  const btn = document.getElementById('briefBtn');
+  const output = document.getElementById('briefOutput');
+  const text = document.getElementById('briefText');
+  btn.disabled=true; btn.textContent='Generating Brief...';
+  output.classList.add('visible');
+
+  const prompt = `Write a complete creator brief for a Qua clothing collaboration. 
+
+Creator type: ${creator}
+Product: ${product}
+Content occasion: ${occasion}
+
+The brief must include:
+1. THE ASK (one sentence — what we want them to create)
+2. WHAT TO SHOW (3-4 specific visual moments — real, not generic)
+3. WHAT TO SAY (the honest story we want told — not a script, a direction)
+4. WHAT NOT TO SAY / DO (3 things — protect the brand voice)
+5. THE HOOK (opening 3 seconds — specific suggestion)
+6. THE FEELING we want the viewer to have after watching
+7. DELIVERABLES (format, length, platform)
+8. USAGE RIGHTS (simple, clear)
+
+Write it like a real creative director briefing a creator they respect. Warm but clear. No marketing jargon. This should feel like a conversation, not a contract. QUA is an affordable luxury Indian workwear brand. The brief should sound like Rupanshi wrote it.`;
+
+  await streamClaude(prompt, text, ()=>{btn.disabled=false;btn.textContent='Generate Creator Brief';}, 5);
+}
+
+// ── UTILITY ───────────────────────────────────────────────────────
+function copyEl(id) {
+  const t = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(t).then(()=>{
+    const btns = document.querySelectorAll('.copy-btn');
+    btns.forEach(b=>{ if(b.onclick?.toString().includes(id)){ b.textContent='Copied ✓'; setTimeout(()=>b.textContent='Copy',2000); }});
+  });
+}
+
+// ── TAB SWITCHING ─────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['see','solve'][i]===tab));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById(`tab-${tab}`).classList.add('active');
+}
+
+function switchSolve(section) {
+  document.querySelectorAll('.solve-nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.solve-section').forEach(s=>s.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.getElementById(`solve-${section}`).classList.add('active');
+}
+
+// ── SCAN ANIMATION ────────────────────────────────────────────────
+async function animateScan() {
+  const btn = document.querySelector('.run-btn');
+  btn.disabled=true; btn.innerHTML='<div class="pulse"></div> Scanning...';
+  const items = document.querySelectorAll('.queue-item');
+  for(let i=0;i<items.length;i++){
+    items[i].style.background='#1A0808';
+    await new Promise(r=>setTimeout(r,150));
+    items[i].style.background='';
+  }
+  setTimeout(()=>{ btn.disabled=false; btn.innerHTML='<div class="pulse"></div> Scan Complete · Re-run'; },1200);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+buildQueue();
+setTimeout(()=>{
+  document.querySelectorAll('[data-w]').forEach(el=>{
+    el.style.width='0%';
+    setTimeout(()=>el.style.width=el.dataset.w, 200);
+  });
+},400);
+</script>
+</body>
+</html>

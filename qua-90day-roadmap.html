@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qua 90-Day Growth Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #F5F0E8; --warm: #FAF7F2; --ink: #1A1614; --ink-light: #3D3530;
+  --dust: #C4B8A8; --rust: #8B3A2A; --rust-l: #B04E3A; --gold: #C49A3C;
+  --sage: #4A6741; --slate: #5A6670;
+  --border: rgba(196,184,168,0.35); --border-s: rgba(196,184,168,0.7);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--cream); color:var(--ink); font-family:'Instrument Sans',sans-serif; min-height:100vh; }
+
+/* HEADER */
+header {
+  padding:28px 48px;
+  border-bottom:1px solid var(--border-s);
+  display:flex; align-items:center; justify-content:space-between;
+  background:rgba(245,240,232,0.97);
+  position:sticky; top:0; z-index:100;
+}
+.brand-name { font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:300; letter-spacing:0.2em; }
+.brand-tag { font-family:'DM Mono',monospace; font-size:9px; color:var(--slate); letter-spacing:0.15em; margin-left:14px; padding-left:14px; border-left:1px solid var(--border-s); }
+.header-tool { font-family:'DM Mono',monospace; font-size:9px; color:var(--dust); letter-spacing:0.1em; }
+
+/* INTRO */
+.intro { background:var(--ink); color:var(--cream); padding:56px 48px 48px; }
+.intro-eyebrow { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.2em; color:var(--gold); text-transform:uppercase; margin-bottom:18px; }
+.intro-title { font-family:'Cormorant Garamond',serif; font-size:52px; font-weight:300; line-height:1.08; margin-bottom:20px; }
+.intro-title em { font-style:italic; color:var(--gold); }
+.intro-desc { font-size:14px; color:rgba(196,184,168,0.85); line-height:1.75; max-width:560px; font-weight:300; margin-bottom:48px; }
+
+/* Phase summary pills */
+.phase-pills { display:flex; gap:12px; flex-wrap:wrap; }
+.phase-pill {
+  padding:12px 22px; border-radius:2px; border:1px solid rgba(196,184,168,0.25);
+  display:flex; flex-direction:column; gap:5px; flex:1; min-width:180px;
+}
+.phase-pill-num { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.15em; color:var(--dust); text-transform:uppercase; }
+.phase-pill-name { font-family:'Cormorant Garamond',serif; font-size:18px; font-weight:300; }
+.phase-pill-days { font-family:'DM Mono',monospace; font-size:9px; color:var(--gold); letter-spacing:0.1em; margin-top:2px; }
+.phase-pill.p1 { border-color:rgba(139,58,42,0.5); }
+.phase-pill.p2 { border-color:rgba(196,154,60,0.5); }
+.phase-pill.p3 { border-color:rgba(74,103,65,0.5); }
+
+/* METRICS BAR */
+.metrics { background:var(--warm); border-bottom:1px solid var(--border-s); padding:28px 48px; display:grid; grid-template-columns:repeat(4,1fr); gap:0; }
+.metric { padding:0 32px 0 0; border-right:1px solid var(--border); }
+.metric:first-child { padding-left:0; }
+.metric:last-child { border-right:none; }
+.metric-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.15em; color:var(--slate); text-transform:uppercase; margin-bottom:8px; }
+.metric-val { font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:300; color:var(--ink); line-height:1; }
+.metric-sub { font-size:11px; color:var(--dust); margin-top:4px; font-weight:300; }
+
+/* MAIN */
+.main { max-width:1100px; margin:0 auto; padding:48px; }
+
+/* PHASE BLOCK */
+.phase-block { margin-bottom:56px; }
+.phase-header { display:flex; align-items:flex-start; gap:24px; margin-bottom:32px; padding-bottom:20px; border-bottom:1px solid var(--border-s); }
+.phase-num-big { font-family:'Cormorant Garamond',serif; font-size:72px; font-weight:300; line-height:1; color:var(--border-s); }
+.phase-header-text { flex:1; padding-top:8px; }
+.phase-badge { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.16em; text-transform:uppercase; padding:4px 12px; border-radius:20px; display:inline-block; margin-bottom:10px; }
+.badge-rust { background:rgba(139,58,42,0.1); color:var(--rust); border:1px solid rgba(139,58,42,0.25); }
+.badge-gold { background:rgba(196,154,60,0.1); color:var(--gold); border:1px solid rgba(196,154,60,0.3); }
+.badge-sage { background:rgba(74,103,65,0.1); color:var(--sage); border:1px solid rgba(74,103,65,0.25); }
+.phase-title { font-family:'Cormorant Garamond',serif; font-size:30px; font-weight:300; margin-bottom:8px; }
+.phase-desc { font-size:13px; color:var(--slate); line-height:1.7; font-weight:300; max-width:600px; }
+.phase-outcome { margin-left:auto; text-align:right; min-width:180px; }
+.outcome-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.14em; color:var(--dust); text-transform:uppercase; margin-bottom:6px; }
+.outcome-val { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:300; color:var(--ink); line-height:1.3; }
+
+/* WEEKS GRID */
+.weeks { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+.week-card {
+  background:var(--warm); border:1px solid var(--border-s); border-radius:2px;
+  overflow:hidden; transition:box-shadow 0.2s;
+}
+.week-card:hover { box-shadow:0 4px 24px rgba(26,22,20,0.08); }
+.week-head { padding:14px 16px 12px; border-bottom:1px solid var(--border); }
+.week-num { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.14em; color:var(--slate); text-transform:uppercase; margin-bottom:4px; }
+.week-name { font-size:13px; font-weight:500; color:var(--ink); line-height:1.3; }
+.week-body { padding:14px 16px; display:flex; flex-direction:column; gap:8px; }
+.week-task { display:flex; align-items:flex-start; gap:8px; }
+.task-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+.dot-rust { background:var(--rust); }
+.dot-gold { background:var(--gold); }
+.dot-sage { background:var(--sage); }
+.dot-slate { background:var(--slate); }
+.task-text { font-size:12px; line-height:1.55; color:var(--ink-light); font-weight:300; }
+.task-text strong { font-weight:500; color:var(--ink); }
+
+/* KPI ROW */
+.kpi-row { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.kpi-card { background:var(--warm); border:1px solid var(--border-s); border-radius:2px; padding:18px 20px; display:flex; flex-direction:column; gap:6px; }
+.kpi-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.14em; color:var(--slate); text-transform:uppercase; }
+.kpi-before { font-size:11px; color:var(--dust); font-weight:300; }
+.kpi-after { font-size:15px; font-weight:500; color:var(--ink); }
+.kpi-delta { font-family:'DM Mono',monospace; font-size:10px; padding:3px 9px; border-radius:20px; display:inline-block; width:fit-content; }
+.delta-up { background:rgba(74,103,65,0.1); color:var(--sage); }
+.delta-warn { background:rgba(196,154,60,0.1); color:var(--gold); }
+
+/* TIMELINE VISUAL */
+.timeline-visual { background:var(--ink); border-radius:3px; padding:32px 36px; margin:48px 0 32px; }
+.tv-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.18em; color:var(--gold); text-transform:uppercase; margin-bottom:24px; }
+.tv-track { position:relative; padding-bottom:32px; }
+.tv-line { position:absolute; top:10px; left:0; right:0; height:1px; background:rgba(196,184,168,0.15); }
+.tv-markers { display:flex; justify-content:space-between; position:relative; }
+.tv-marker { display:flex; flex-direction:column; align-items:center; gap:10px; }
+.tv-dot { width:10px; height:10px; border-radius:50%; border:2px solid; position:relative; z-index:1; }
+.tv-dot-fill { background:var(--rust); border-color:var(--rust); box-shadow:0 0 0 3px rgba(139,58,42,0.3); }
+.tv-dot-gold { background:var(--gold); border-color:var(--gold); box-shadow:0 0 0 3px rgba(196,154,60,0.3); }
+.tv-dot-sage { background:var(--sage); border-color:var(--sage); box-shadow:0 0 0 3px rgba(74,103,65,0.3); }
+.tv-dot-empty { background:transparent; border-color:rgba(196,184,168,0.3); }
+.tv-label-text { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.1em; color:var(--dust); text-transform:uppercase; text-align:center; }
+.tv-label-val { font-family:'Cormorant Garamond',serif; font-size:15px; color:var(--cream); text-align:center; }
+.tv-rows { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:24px; border-top:1px solid rgba(196,184,168,0.1); padding-top:24px; }
+.tv-row-col { display:flex; flex-direction:column; gap:8px; }
+.tv-row-head { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.14em; text-transform:uppercase; padding-bottom:8px; border-bottom:1px solid rgba(196,184,168,0.12); }
+.tv-row-head.c-rust { color:var(--rust); }
+.tv-row-head.c-gold { color:var(--gold); }
+.tv-row-head.c-sage { color:var(--sage); }
+.tv-row-item { font-size:12px; color:rgba(196,184,168,0.7); line-height:1.5; font-weight:300; padding-left:10px; border-left:1px solid rgba(196,184,168,0.12); }
+
+/* ASK SECTION */
+.ask { background:var(--rust); padding:48px; margin-top:8px; border-radius:2px; display:grid; grid-template-columns:1fr auto; gap:40px; align-items:center; }
+.ask-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.18em; color:rgba(245,240,232,0.6); text-transform:uppercase; margin-bottom:14px; }
+.ask-title { font-family:'Cormorant Garamond',serif; font-size:36px; font-weight:300; color:var(--cream); line-height:1.15; margin-bottom:14px; }
+.ask-title em { font-style:italic; }
+.ask-desc { font-size:13px; color:rgba(245,240,232,0.75); line-height:1.7; font-weight:300; max-width:480px; }
+.ask-contact { text-align:right; }
+.ask-contact-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.14em; color:rgba(245,240,232,0.5); text-transform:uppercase; margin-bottom:10px; }
+.ask-contact-name { font-family:'Cormorant Garamond',serif; font-size:24px; font-weight:300; color:var(--cream); }
+.ask-contact-sub { font-size:12px; color:rgba(245,240,232,0.6); margin-top:4px; }
+
+@media(max-width:900px){
+  header,.intro,.main,.metrics { padding-left:24px; padding-right:24px; }
+  .intro-title { font-size:36px; }
+  .weeks { grid-template-columns:1fr 1fr; }
+  .kpi-row { grid-template-columns:1fr; }
+  .metrics { grid-template-columns:1fr 1fr; gap:20px; }
+  .metric { border-right:none; padding:0; }
+  .tv-rows { grid-template-columns:1fr; }
+  .ask { grid-template-columns:1fr; }
+  .ask-contact { text-align:left; }
+  .phase-pills { flex-direction:column; }
+  .phase-outcome { display:none; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:baseline;">
+    <span class="brand-name">QUA</span>
+    <span class="brand-tag">90-DAY GROWTH ROADMAP</span>
+  </div>
+  <div class="header-tool">TOOL 03 OF 03</div>
+</header>
+
+<!-- INTRO -->
+<section class="intro">
+  <div class="intro-eyebrow">The plan</div>
+  <h1 class="intro-title">What the next<br><em>90 days</em> look like.</h1>
+  <p class="intro-desc">
+    This is not a list of recommendations. It is a week-by-week implementation plan with owners, timelines, and measurable outcomes at every stage. Three phases. One goal: turn a brand with the right product and the wrong visibility into a machine that grows.
+  </p>
+  <div class="phase-pills">
+    <div class="phase-pill p1">
+      <span class="phase-pill-num">Phase 01</span>
+      <span class="phase-pill-name">Repair</span>
+      <span class="phase-pill-days">Days 1 to 30</span>
+    </div>
+    <div class="phase-pill p2">
+      <span class="phase-pill-num">Phase 02</span>
+      <span class="phase-pill-name">Build</span>
+      <span class="phase-pill-days">Days 31 to 60</span>
+    </div>
+    <div class="phase-pill p3">
+      <span class="phase-pill-num">Phase 03</span>
+      <span class="phase-pill-name">Scale</span>
+      <span class="phase-pill-days">Days 61 to 90</span>
+    </div>
+  </div>
+</section>
+
+<!-- METRICS BAR -->
+<div class="metrics">
+  <div class="metric">
+    <div class="metric-label">Current Revenue</div>
+    <div class="metric-val">7.4Cr</div>
+    <div class="metric-sub">Annual, declining</div>
+  </div>
+  <div class="metric" style="padding-left:32px;">
+    <div class="metric-label">Google Review Score</div>
+    <div class="metric-val">3.8</div>
+    <div class="metric-sub">Top result is negative, 3 years unanswered</div>
+  </div>
+  <div class="metric" style="padding-left:32px;">
+    <div class="metric-label">Seed Raised</div>
+    <div class="metric-val">555K</div>
+    <div class="metric-sub">December 2025</div>
+  </div>
+  <div class="metric" style="padding-left:32px;">
+    <div class="metric-label">Target</div>
+    <div class="metric-val">400Cr</div>
+    <div class="metric-sub">Founder stated ambition</div>
+  </div>
+</div>
+
+<!-- TIMELINE VISUAL -->
+<div class="main" style="padding-bottom:0;">
+  <div class="timeline-visual">
+    <div class="tv-label">90-Day Progress Arc</div>
+    <div class="tv-track">
+      <div class="tv-line"></div>
+      <div class="tv-markers">
+        <div class="tv-marker">
+          <div class="tv-dot tv-dot-fill"></div>
+          <div class="tv-label-text">Day 1<br>Today</div>
+          <div class="tv-label-val">Start</div>
+        </div>
+        <div class="tv-marker">
+          <div class="tv-dot tv-dot-fill"></div>
+          <div class="tv-label-text">Week 1</div>
+          <div class="tv-label-val">Review responded</div>
+        </div>
+        <div class="tv-marker">
+          <div class="tv-dot tv-dot-fill"></div>
+          <div class="tv-label-text">Week 2</div>
+          <div class="tv-label-val">SEO live</div>
+        </div>
+        <div class="tv-marker">
+          <div class="tv-dot tv-dot-gold"></div>
+          <div class="tv-label-text">Day 30</div>
+          <div class="tv-label-val">First results</div>
+        </div>
+        <div class="tv-marker">
+          <div class="tv-dot tv-dot-gold"></div>
+          <div class="tv-label-text">Day 45</div>
+          <div class="tv-label-val">Creators live</div>
+        </div>
+        <div class="tv-marker">
+          <div class="tv-dot tv-dot-gold"></div>
+          <div class="tv-label-text">Day 60</div>
+          <div class="tv-label-val">System running</div>
+        </div>
+        <div class="tv-marker">
+          <div class="tv-dot tv-dot-sage"></div>
+          <div class="tv-label-text">Day 90</div>
+          <div class="tv-label-val">Measurable growth</div>
+        </div>
+      </div>
+    </div>
+    <div class="tv-rows">
+      <div class="tv-row-col">
+        <div class="tv-row-head c-rust">Phase 01: Repair (Days 1 to 30)</div>
+        <div class="tv-row-item">Respond to the Google review</div>
+        <div class="tv-row-item">Fix meta titles and descriptions for top 20 products</div>
+        <div class="tv-row-item">Launch post-purchase review request email</div>
+        <div class="tv-row-item">Identify and brief 3 stylist partners</div>
+      </div>
+      <div class="tv-row-col">
+        <div class="tv-row-head c-gold">Phase 02: Build (Days 31 to 60)</div>
+        <div class="tv-row-item">First creator content goes live</div>
+        <div class="tv-row-item">SEO traffic begins to shift</div>
+        <div class="tv-row-item">Positive reviews start coming in</div>
+        <div class="tv-row-item">Content brief system fully operational</div>
+      </div>
+      <div class="tv-row-col">
+        <div class="tv-row-head c-sage">Phase 03: Scale (Days 61 to 90)</div>
+        <div class="tv-row-item">Measure and double what is working</div>
+        <div class="tv-row-item">Expand creator programme to 8 to 10 voices</div>
+        <div class="tv-row-item">First organic search ranking improvements visible</div>
+        <div class="tv-row-item">Revenue per visitor begins to climb</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- PHASE 1 -->
+  <div class="phase-block">
+    <div class="phase-header">
+      <div class="phase-num-big">01</div>
+      <div class="phase-header-text">
+        <span class="phase-badge badge-rust">Phase 01: Days 1 to 30</span>
+        <div class="phase-title">Repair what is broken.<br>Before you grow, you stop the bleeding.</div>
+        <div class="phase-desc">The brand has problems that active customers are seeing right now. A negative review at the top of Google. Product pages invisible to search. No system to capture the good experiences customers are having. These get fixed first, completely, before any growth work begins.</div>
+      </div>
+      <div class="phase-outcome">
+        <div class="outcome-label">Phase Target</div>
+        <div class="outcome-val">Foundation fixed.<br>Fires out.</div>
+      </div>
+    </div>
+
+    <div class="weeks">
+      <div class="week-card">
+        <div class="week-head">
+          <div class="week-num">Week 01</div>
+          <div class="week-name">The Google Review Response</div>
+        </div>
+        <div class="week-body">
+          <div class="week-task"><div class="task-dot dot-rust"></div><div class="task-text"><strong>Day 1:</strong> Draft the founder response using the AI review tool</div></div>
+          <div class="week-task"><div class="task-dot dot-rust"></div><div class="task-text"><strong>Day 2:</strong> Legal check if needed, then publish response publicly</div></div>
+          <div class="week-task"><div class="task-dot dot-rust"></div><div class="task-text"><strong>Day 3:</strong> Set up post-purchase email requesting Google reviews from happy customers</div></div>
+          <div class="week-task"><div class="task-dot dot-slate"></div><div class="task-text">Owner: Founder + Marketing lead</div></div>
+        </div>
+      </div>
+
+      <div class="week-card">
+        <div class="week-head">
+          <div class="week-num">Week 02</div>
+          <div class="week-name">SEO Fix: Top 20 Products</div>
+        </div>
+        <div class="week-body">
+          <div class="week-task"><div class="task-dot dot-rust"></div><div class="task-text"><strong>Day 8:</strong> Run all 20 products through the SEO generator tool</div></div>
+          <div class="week-task"><div class="task-dot dot-rust"></div><div class="task-text"><strong>Day 9 to 10:</strong> Implement new meta titles and descriptions in Shopify</div></div>
+          <div class="week-task"><div class="task-dot dot-rust"></div><div class="task-text"><strong>Day 11:</strong> Fix image alt texts for the same 20 products</div></div>
+          <div class="week-task"><div class="task-dot dot-slate"></div><div class="task-text">Owner: Marketing + Tech / Shopify admin</div></div>
+        </div>
+      </div>
+
+      <div class="week-card">
+        <div class="week-head">
+          <div class="week-num">Week 03</div>
+          <div class="week-name">Stylist Outreach</div>
+        </div>
+        <div class="week-body">
+          <div class="week-task"><div class="task-dot dot-rust"></div><div class="task-text"><strong>Day 15:</strong> Identify 5 Delhi and Mumbai stylists who dress professional women</div></div>
+          <div class="week-task"><div class="task-dot dot-rust"></div><div class="task-text"><strong>Day 16:</strong> Write a personal letter from Rupanshi, not a brand template</div></div>
+          <div class="week-task"><div class="task-dot dot-rust"></div><div class="task-text"><strong>Day 17 to 18:</strong> Curate and dispatch gifting boxes with 2 to 3 pieces per stylist</div></div>
+          <div class="week-task"><div class="task-dot dot-slate"></div><div class="task-text">Owner: Founder personally drafts letter</div></div>
+        </div>
+      </div>
+
+      <div class="week-card">
+        <div class="week-head">
+          <div class="week-num">Week 04</div>
+          <div class="week-name">First Measurement</div>
+        </div>
+        <div class="week-body">
+          <div class="week-task"><div class="task-dot dot-rust"></div><div class="task-text"><strong>Day 22:</strong> Check Google review status: new positive reviews coming in?</div></div>
+          <div class="week-task"><div class="task-dot dot-rust"></div><div class="task-text"><strong>Day 24:</strong> Check Shopify analytics: any organic traffic movement on fixed pages?</div></div>
+          <div class="week-task"><div class="task-dot dot-rust"></div><div class="task-text"><strong>Day 25 to 28:</strong> Follow up with stylists personally, not via a team member</div></div>
+          <div class="week-task"><div class="task-dot dot-slate"></div><div class="task-text">Owner: Marketing lead</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Google Review</div>
+        <div class="kpi-before">Before: 3.8 stars, unanswered 3 years</div>
+        <div class="kpi-after">Target: Response live, 3 new positive reviews</div>
+        <span class="kpi-delta delta-warn">In progress</span>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">SEO Coverage</div>
+        <div class="kpi-before">Before: 0 of 20 products optimised</div>
+        <div class="kpi-after">Target: 20 of 20 products with correct meta data</div>
+        <span class="kpi-delta delta-up">Achievable Week 2</span>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Stylist Relations</div>
+        <div class="kpi-before">Before: No formal stylist programme</div>
+        <div class="kpi-after">Target: 5 stylists gifted and in conversation</div>
+        <span class="kpi-delta delta-up">Week 3</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 2 -->
+  <div class="phase-block">
+    <div class="phase-header">
+      <div class="phase-num-big">02</div>
+      <div class="phase-header-text">
+        <span class="phase-badge badge-gold">Phase 02: Days 31 to 60</span>
+        <div class="phase-title">Build the content machine.<br>Systematise what was random.</div>
+        <div class="phase-desc">Qua has had organic celebrity and creator moments it never captured. That stops now. This phase builds the system: a repeatable process for briefing creators, generating content, and converting that attention into traffic and sales.</div>
+      </div>
+      <div class="phase-outcome">
+        <div class="outcome-label">Phase Target</div>
+        <div class="outcome-val">Content engine<br>live and running.</div>
+      </div>
+    </div>
+
+    <div class="weeks">
+      <div class="week-card">
+        <div class="week-head">
+          <div class="week-num">Week 05</div>
+          <div class="week-name">Creator Brief and Onboarding</div>
+        </div>
+        <div class="week-body">
+          <div class="week-task"><div class="task-dot dot-gold"></div><div class="task-text"><strong>Day 31:</strong> Select 3 creators from the warm list: Deeksha, Anahita, or similar profiles</div></div>
+          <div class="week-task"><div class="task-dot dot-gold"></div><div class="task-text"><strong>Day 32:</strong> Generate briefs using the Content Brief tool, personalise and send</div></div>
+          <div class="week-task"><div class="task-dot dot-gold"></div><div class="task-text"><strong>Day 33 to 35:</strong> Dispatch products, confirm shoot timelines</div></div>
+          <div class="week-task"><div class="task-dot dot-slate"></div><div class="task-text">Owner: Marketing lead</div></div>
+        </div>
+      </div>
+
+      <div class="week-card">
+        <div class="week-head">
+          <div class="week-num">Week 06</div>
+          <div class="week-name">SEO: Next 30 Products</div>
+        </div>
+        <div class="week-body">
+          <div class="week-task"><div class="task-dot dot-gold"></div><div class="task-text"><strong>Day 38:</strong> Run next batch of 30 products through SEO generator</div></div>
+          <div class="week-task"><div class="task-dot dot-gold"></div><div class="task-text"><strong>Day 39 to 41:</strong> Implement in Shopify, including collection page descriptions</div></div>
+          <div class="week-task"><div class="task-dot dot-gold"></div><div class="task-text"><strong>Day 42:</strong> Submit updated sitemap to Google Search Console</div></div>
+          <div class="week-task"><div class="task-dot dot-slate"></div><div class="task-text">Owner: Tech or Shopify admin</div></div>
+        </div>
+      </div>
+
+      <div class="week-card">
+        <div class="week-head">
+          <div class="week-num">Week 07</div>
+          <div class="week-name">First Creator Content Live</div>
+        </div>
+        <div class="week-body">
+          <div class="week-task"><div class="task-dot dot-gold"></div><div class="task-text"><strong>Day 45:</strong> First Reel goes live from creator 1</div></div>
+          <div class="week-task"><div class="task-dot dot-gold"></div><div class="task-text"><strong>Day 45:</strong> Qua amplifies immediately via Stories, saves, and a pinned comment</div></div>
+          <div class="week-task"><div class="task-dot dot-gold"></div><div class="task-text"><strong>Day 46:</strong> Track traffic spike to site within 48 hours of post going live</div></div>
+          <div class="week-task"><div class="task-dot dot-slate"></div><div class="task-text">Owner: Founder must engage personally on the post</div></div>
+        </div>
+      </div>
+
+      <div class="week-card">
+        <div class="week-head">
+          <div class="week-num">Week 08</div>
+          <div class="week-name">Review and Optimise</div>
+        </div>
+        <div class="week-body">
+          <div class="week-task"><div class="task-dot dot-gold"></div><div class="task-text"><strong>Day 52:</strong> Measure: which creator drove the most traffic and saves?</div></div>
+          <div class="week-task"><div class="task-dot dot-gold"></div><div class="task-text"><strong>Day 53:</strong> Double down: brief the best-performing creator type again</div></div>
+          <div class="week-task"><div class="task-dot dot-gold"></div><div class="task-text"><strong>Day 54 to 56:</strong> Check if Google star rating is improving with new reviews</div></div>
+          <div class="week-task"><div class="task-dot dot-slate"></div><div class="task-text">Owner: Marketing lead with founder review</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Creator Content</div>
+        <div class="kpi-before">Before: 0 structured creator partnerships</div>
+        <div class="kpi-after">Target: 3 reels live, tracked for traffic</div>
+        <span class="kpi-delta delta-up">Week 7</span>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">SEO Coverage</div>
+        <div class="kpi-before">Before: 20 products done</div>
+        <div class="kpi-after">Target: 50 products fully optimised</div>
+        <span class="kpi-delta delta-up">Week 6</span>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Google Rating</div>
+        <div class="kpi-before">Before: 3.8, declining</div>
+        <div class="kpi-after">Target: 4.1 or above with new reviews</div>
+        <span class="kpi-delta delta-warn">Day 60 check</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 3 -->
+  <div class="phase-block">
+    <div class="phase-header">
+      <div class="phase-num-big">03</div>
+      <div class="phase-header-text">
+        <span class="phase-badge badge-sage">Phase 03: Days 61 to 90</span>
+        <div class="phase-title">Scale what is working.<br>Build the repeatable growth loop.</div>
+        <div class="phase-desc">By Day 60, you know what is working. A creator type that drives traffic. Products that are ranking. Reviews coming in. Phase 3 scales everything that worked and eliminates everything that did not. This is where the machine starts to run itself.</div>
+      </div>
+      <div class="phase-outcome">
+        <div class="outcome-label">Phase Target</div>
+        <div class="outcome-val">Measurable<br>revenue impact.</div>
+      </div>
+    </div>
+
+    <div class="weeks">
+      <div class="week-card">
+        <div class="week-head">
+          <div class="week-num">Week 09</div>
+          <div class="week-name">Scale the Creator Programme</div>
+        </div>
+        <div class="week-body">
+          <div class="week-task"><div class="task-dot dot-sage"></div><div class="task-text"><strong>Day 61:</strong> Brief 5 more creators using the established template</div></div>
+          <div class="week-task"><div class="task-dot dot-sage"></div><div class="task-text"><strong>Day 62:</strong> Add one stylist content brief to the mix: a styling video, not a try-on</div></div>
+          <div class="week-task"><div class="task-dot dot-sage"></div><div class="task-text"><strong>Day 63 to 65:</strong> Build a content calendar so posts go live consistently, not in bursts</div></div>
+          <div class="week-task"><div class="task-dot dot-slate"></div><div class="task-text">Owner: Marketing lead</div></div>
+        </div>
+      </div>
+
+      <div class="week-card">
+        <div class="week-head">
+          <div class="week-num">Week 10</div>
+          <div class="week-name">SEO: Full Catalogue</div>
+        </div>
+        <div class="week-body">
+          <div class="week-task"><div class="task-dot dot-sage"></div><div class="task-text"><strong>Day 68:</strong> Complete SEO fix for every remaining product in the catalogue</div></div>
+          <div class="week-task"><div class="task-dot dot-sage"></div><div class="task-text"><strong>Day 69:</strong> Write optimised category page descriptions for all collections</div></div>
+          <div class="week-task"><div class="task-dot dot-sage"></div><div class="task-text"><strong>Day 70:</strong> Set up Google Search Console tracking for keyword movements</div></div>
+          <div class="week-task"><div class="task-dot dot-slate"></div><div class="task-text">Owner: Tech or Shopify admin</div></div>
+        </div>
+      </div>
+
+      <div class="week-card">
+        <div class="week-head">
+          <div class="week-num">Week 11</div>
+          <div class="week-name">Reputation: Goal is 4.5 Stars</div>
+        </div>
+        <div class="week-body">
+          <div class="week-task"><div class="task-dot dot-sage"></div><div class="task-text"><strong>Day 75:</strong> Audit all Google and MakeMyTrip reviews received so far</div></div>
+          <div class="week-task"><div class="task-dot dot-sage"></div><div class="task-text"><strong>Day 76:</strong> Respond to every review, positive or negative, using the AI tool</div></div>
+          <div class="week-task"><div class="task-dot dot-sage"></div><div class="task-text"><strong>Day 77:</strong> Send a targeted review request to the top 200 customers by order value</div></div>
+          <div class="week-task"><div class="task-dot dot-slate"></div><div class="task-text">Owner: Marketing lead</div></div>
+        </div>
+      </div>
+
+      <div class="week-card">
+        <div class="week-head">
+          <div class="week-num">Week 12</div>
+          <div class="week-name">Day 90 Report</div>
+        </div>
+        <div class="week-body">
+          <div class="week-task"><div class="task-dot dot-sage"></div><div class="task-text"><strong>Day 88:</strong> Pull data: organic traffic, review score, creator-driven sessions, conversion rate</div></div>
+          <div class="week-task"><div class="task-dot dot-sage"></div><div class="task-text"><strong>Day 89:</strong> Compare revenue per visitor before and after SEO fixes</div></div>
+          <div class="week-task"><div class="task-dot dot-sage"></div><div class="task-text"><strong>Day 90:</strong> Present findings to Rupanshi. Recommend next 90 days.</div></div>
+          <div class="week-task"><div class="task-dot dot-slate"></div><div class="task-text">Owner: Whoever built this roadmap</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Creator Programme</div>
+        <div class="kpi-before">Before: 0 structured partnerships</div>
+        <div class="kpi-after">Target: 8 to 10 active creator voices</div>
+        <span class="kpi-delta delta-up">Systematic by Day 90</span>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Organic Search Traffic</div>
+        <div class="kpi-before">Before: Near zero product discoverability</div>
+        <div class="kpi-after">Target: 30 to 40% uplift in organic sessions</div>
+        <span class="kpi-delta delta-up">Visible by Day 75</span>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Google Rating</div>
+        <div class="kpi-before">Before: 3.8</div>
+        <div class="kpi-after">Target: 4.5 or above</div>
+        <span class="kpi-delta delta-up">Day 90</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- THE ASK -->
+  <div class="ask">
+    <div>
+      <div class="ask-label">The ask</div>
+      <h2 class="ask-title">Not a consultant.<br><em>A builder.</em></h2>
+      <p class="ask-desc">
+        Everything in this roadmap is ready to execute on Day 1. The tools are built. The briefs are written. The plan is specific. What is missing is one person inside the brand who owns it end to end and is accountable for every milestone. That is what I am here for.
+      </p>
+    </div>
+    <div class="ask-contact">
+      <div class="ask-contact-label">Presented by</div>
+      <div class="ask-contact-name">Devyani Sabale</div>
+      <div class="ask-contact-sub">ESCP MiM, Digital Marketing and Luxury Brand Management</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

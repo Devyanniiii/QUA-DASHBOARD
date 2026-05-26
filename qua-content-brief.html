@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qua Content Brief Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #F5F0E8; --warm: #FAF7F2; --ink: #1A1614; --ink-light: #3D3530;
+  --dust: #C4B8A8; --rust: #8B3A2A; --rust-l: #B04E3A; --gold: #C49A3C;
+  --sage: #4A6741; --slate: #5A6670;
+  --border: rgba(196,184,168,0.35); --border-s: rgba(196,184,168,0.7);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--cream); color:var(--ink); font-family:'Instrument Sans',sans-serif; min-height:100vh; }
+
+/* HEADER */
+header { padding:28px 48px; border-bottom:1px solid var(--border-s); display:flex; align-items:center; justify-content:space-between; background:rgba(245,240,232,0.95); position:sticky; top:0; z-index:100; }
+.brand-name { font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:300; letter-spacing:0.2em; }
+.brand-tag { font-family:'DM Mono',monospace; font-size:9px; color:var(--slate); letter-spacing:0.15em; margin-left:14px; padding-left:14px; border-left:1px solid var(--border-s); }
+
+/* INTRO SECTION */
+.intro { background:var(--ink); color:var(--cream); padding:56px 48px; }
+.intro-eyebrow { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.2em; color:var(--gold); text-transform:uppercase; margin-bottom:18px; }
+.intro-title { font-family:'Cormorant Garamond',serif; font-size:48px; font-weight:300; line-height:1.1; margin-bottom:24px; }
+.intro-title em { font-style:italic; color:var(--gold); }
+.intro-body { display:grid; grid-template-columns:1fr 1fr 1fr; gap:32px; margin-top:40px; border-top:1px solid rgba(196,184,168,0.2); padding-top:36px; }
+.intro-block-num { font-family:'Cormorant Garamond',serif; font-size:36px; font-weight:300; color:var(--gold); line-height:1; margin-bottom:10px; }
+.intro-block-title { font-size:13px; font-weight:500; margin-bottom:8px; letter-spacing:0.04em; }
+.intro-block-desc { font-size:12px; color:var(--dust); line-height:1.7; font-weight:300; }
+
+/* TOOL SECTION */
+.tool-wrap { max-width:1100px; margin:0 auto; padding:48px; display:grid; grid-template-columns:360px 1fr; gap:32px; align-items:start; }
+
+/* FORM */
+.form-card { background:var(--warm); border:1px solid var(--border-s); border-radius:3px; overflow:hidden; position:sticky; top:88px; }
+.form-head { padding:18px 24px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+.form-head-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.18em; color:var(--slate); text-transform:uppercase; }
+.status-dot { width:7px; height:7px; border-radius:50%; background:var(--gold); animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.form-body { padding:24px; display:flex; flex-direction:column; gap:18px; }
+.field { display:flex; flex-direction:column; gap:7px; }
+label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.16em; color:var(--slate); text-transform:uppercase; }
+select, input, textarea { width:100%; background:var(--cream); border:1px solid var(--border-s); border-radius:2px; padding:9px 13px; font-family:'Instrument Sans',sans-serif; font-size:13px; color:var(--ink); outline:none; transition:border-color 0.2s; }
+select { appearance:none; background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%235A6670' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:32px; cursor:pointer; }
+select:focus, input:focus, textarea:focus { border-color:var(--rust); }
+textarea { resize:vertical; min-height:70px; line-height:1.6; }
+.chips { display:flex; flex-wrap:wrap; gap:6px; }
+.chip { padding:5px 12px; border-radius:20px; border:1px solid var(--border-s); font-size:11px; color:var(--slate); cursor:pointer; transition:all 0.15s; background:var(--cream); }
+.chip:hover { border-color:var(--dust); color:var(--ink); }
+.chip.on-rust { background:var(--rust); color:var(--cream); border-color:var(--rust); }
+.chip.on-gold { background:var(--gold); color:var(--ink); border-color:var(--gold); }
+.chip.on-sage { background:var(--sage); color:var(--cream); border-color:var(--sage); }
+.divider { height:1px; background:var(--border); }
+.gen-btn { width:100%; padding:13px; background:var(--ink); color:var(--cream); border:none; border-radius:2px; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; cursor:pointer; transition:background 0.2s; display:flex; align-items:center; justify-content:center; gap:10px; }
+.gen-btn:hover:not(:disabled) { background:var(--rust); }
+.gen-btn:disabled { background:var(--dust); cursor:not-allowed; }
+.err { font-family:'DM Mono',monospace; font-size:10px; color:var(--rust); padding:10px 12px; background:rgba(139,58,42,0.06); border:1px solid rgba(139,58,42,0.2); border-radius:2px; display:none; }
+
+/* OUTPUT */
+.out { min-height:400px; }
+.empty { background:var(--warm); border:1px dashed var(--border-s); border-radius:3px; padding:64px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:14px; }
+.empty-icon { font-size:28px; opacity:0.3; }
+.empty-title { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:300; color:var(--slate); }
+.empty-desc { font-size:12px; color:var(--dust); line-height:1.7; max-width:260px; }
+
+/* LOADING */
+.loading { background:var(--warm); border:1px solid var(--border-s); border-radius:3px; padding:56px; display:flex; flex-direction:column; align-items:center; gap:20px; }
+.loading-title { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:300; font-style:italic; color:var(--slate); }
+.bar-wrap { width:220px; height:1px; background:var(--border); overflow:hidden; }
+.bar { height:100%; background:var(--rust); animation:bar 1.5s ease-in-out infinite; transform:translateX(-100%); }
+@keyframes bar { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+.load-steps { display:flex; flex-direction:column; gap:8px; align-items:center; }
+.load-step { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.12em; color:var(--dust); text-transform:uppercase; opacity:0; animation:fadein 0.4s forwards; }
+@keyframes fadein { to{opacity:1;color:var(--slate)} }
+
+/* BRIEF CARD */
+.brief { background:var(--warm); border:1px solid var(--border-s); border-radius:3px; overflow:hidden; animation:up 0.4s ease; }
+@keyframes up { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+.brief-head { background:var(--ink); padding:22px 28px; display:flex; justify-content:space-between; align-items:flex-start; }
+.brief-head-title { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:300; color:var(--cream); }
+.brief-head-sub { font-family:'DM Mono',monospace; font-size:9px; color:var(--dust); letter-spacing:0.12em; margin-top:4px; }
+.brief-tag { font-family:'DM Mono',monospace; font-size:9px; color:var(--gold); border:1px solid rgba(196,154,60,0.4); padding:5px 12px; border-radius:20px; letter-spacing:0.1em; }
+.brief-body { padding:32px 28px; display:flex; flex-direction:column; gap:28px; }
+.sec { display:flex; flex-direction:column; gap:10px; }
+.sec-label { font-family:'DM Mono',monospace; font-size:9px; font-weight:500; letter-spacing:0.2em; color:var(--rust); text-transform:uppercase; display:flex; align-items:center; gap:8px; }
+.sec-label::after { content:''; flex:1; height:1px; background:var(--border); }
+.sec-text { font-size:13.5px; line-height:1.8; color:var(--ink-light); font-weight:300; white-space:pre-wrap; }
+.highlight { background:rgba(139,58,42,0.05); border-left:2px solid var(--rust); padding:16px 18px; border-radius:0 2px 2px 0; font-family:'Cormorant Garamond',serif; font-size:16px; line-height:1.7; color:var(--ink-light); }
+.dodont { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.do-box { background:rgba(74,103,65,0.07); border:1px solid rgba(74,103,65,0.25); border-radius:2px; padding:14px 16px; }
+.dont-box { background:rgba(139,58,42,0.07); border:1px solid rgba(139,58,42,0.25); border-radius:2px; padding:14px 16px; }
+.dd-label { font-family:'DM Mono',monospace; font-size:8px; font-weight:500; letter-spacing:0.2em; text-transform:uppercase; margin-bottom:10px; }
+.do-box .dd-label { color:var(--sage); }
+.dont-box .dd-label { color:var(--rust); }
+.dd-list { list-style:none; display:flex; flex-direction:column; gap:6px; }
+.dd-list li { font-size:12px; line-height:1.55; color:var(--ink-light); padding-left:16px; position:relative; }
+.do-box .dd-list li::before { content:'✓'; position:absolute; left:0; color:var(--sage); font-size:10px; }
+.dont-box .dd-list li::before { content:'✕'; position:absolute; left:0; color:var(--rust); font-size:10px; }
+.tags { display:flex; flex-wrap:wrap; gap:7px; }
+.htag { font-family:'DM Mono',monospace; font-size:10px; color:var(--slate); background:var(--cream); border:1px solid var(--border-s); padding:4px 11px; border-radius:20px; }
+.htag.primary { background:var(--ink); color:var(--cream); border-color:var(--ink); }
+.brief-foot { padding:16px 28px; border-top:1px solid var(--border); background:var(--cream); display:flex; gap:10px; align-items:center; }
+.act-btn { padding:9px 18px; border-radius:2px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; transition:all 0.15s; border:1px solid var(--border-s); background:transparent; color:var(--slate); }
+.act-btn:hover { border-color:var(--dust); color:var(--ink); }
+.act-btn.primary { background:var(--rust); color:var(--cream); border-color:var(--rust); }
+.act-btn.primary:hover { background:var(--rust-l); }
+.copy-ok { font-family:'DM Mono',monospace; font-size:10px; color:var(--sage); letter-spacing:0.1em; margin-left:auto; opacity:0; transition:opacity 0.3s; }
+.copy-ok.show { opacity:1; }
+
+/* Examples */
+.examples-bar { background:rgba(245,240,232,0.7); border-bottom:1px solid var(--border); padding:16px 48px; display:flex; align-items:center; gap:14px; }
+.ex-label { font-family:'DM Mono',monospace; font-size:9px; color:var(--dust); letter-spacing:0.16em; text-transform:uppercase; white-space:nowrap; }
+.ex-pills { display:flex; gap:7px; flex-wrap:wrap; }
+.ex-pill { padding:6px 14px; border:1px solid var(--border); border-radius:20px; font-size:12px; color:var(--slate); cursor:pointer; transition:all 0.15s; }
+.ex-pill:hover { border-color:var(--rust); color:var(--rust); background:rgba(139,58,42,0.04); }
+
+@media(max-width:900px){
+  .tool-wrap{grid-template-columns:1fr;padding:24px;}
+  header,.examples-bar{padding-left:24px;padding-right:24px;}
+  .intro{padding:40px 24px;}
+  .intro-body{grid-template-columns:1fr;}
+  .intro-title{font-size:34px;}
+  .form-card{position:static;}
+  .dodont{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:baseline;">
+    <span class="brand-name">QUA</span>
+    <span class="brand-tag">CONTENT BRIEF ENGINE</span>
+  </div>
+  <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--dust);letter-spacing:0.1em;">TOOL 03 OF 03</div>
+</header>
+
+<!-- INTRO -->
+<section class="intro">
+  <div class="intro-eyebrow">What this tool does</div>
+  <h1 class="intro-title">From idea to <em>send-ready brief</em><br>in under 60 seconds.</h1>
+  <p style="font-size:14px;color:var(--dust);line-height:1.75;max-width:600px;font-weight:300;">
+    Creator briefs are where most brand collaborations fall apart too vague, too corporate, or too generic to produce content that actually looks like the brand. This tool generates a complete, specific, copy-paste-ready brief tailored to Qua's brand identity and the exact creator you're working with.
+  </p>
+
+  <div class="intro-body">
+    <div>
+      <div class="intro-block-num">01</div>
+      <div class="intro-block-title">Configure the brief</div>
+      <div class="intro-block-desc">Select creator type, the product being featured, the occasion, content format, and campaign goal. Add any specific notes about the creator or the shoot.</div>
+    </div>
+    <div>
+      <div class="intro-block-num">02</div>
+      <div class="intro-block-title">AI writes it for you</div>
+      <div class="intro-block-desc">Claude generates a complete brief written in Qua's voice hook concepts, shot list, caption, do's & don'ts, hashtags, and usage rights. All specific. No filler.</div>
+    </div>
+    <div>
+      <div class="intro-block-num">03</div>
+      <div class="intro-block-title">Copy and send</div>
+      <div class="intro-block-desc">Copy the full brief to your clipboard and paste it directly into an email or DM. Or regenerate with different parameters until it's exactly right.</div>
+    </div>
+  </div>
+</section>
+
+<!-- EXAMPLES -->
+<div class="examples-bar">
+  <span class="ex-label">Try an example →</span>
+  <div class="ex-pills">
+    <span class="ex-pill" onclick="loadExample('deeksha')">Deeksha Khurana Office</span>
+    <span class="ex-pill" onclick="loadExample('anahita')">Anahita Wedding Guest</span>
+    <span class="ex-pill" onclick="loadExample('stylist')">Stylist Gifting Brief</span>
+    <span class="ex-pill" onclick="loadExample('micro')">Micro Creator Everyday</span>
+  </div>
+</div>
+
+<!-- TOOL -->
+<div class="tool-wrap">
+
+  <!-- FORM -->
+  <div class="form-card">
+    <div class="form-head">
+      <span class="form-head-label">Brief Parameters</span>
+      <div class="status-dot"></div>
+    </div>
+    <div class="form-body">
+
+      <div class="field">
+        <label>Creator Type</label>
+        <select id="creatorType">
+          <option value="">Select creator type</option>
+          <option value="Macro Fashion Influencer (100K+ followers)">Macro Fashion Influencer (100K+)</option>
+          <option value="Mid-tier Fashion Creator (20K100K followers)">Mid-tier Fashion Creator (20K100K)</option>
+          <option value="Micro Influencer (5K20K followers)">Micro Influencer (5K20K)</option>
+          <option value="Personal Stylist or Fashion Editor">Personal Stylist / Fashion Editor</option>
+          <option value="Lifestyle Creator">Lifestyle Creator</option>
+          <option value="Celebrity or Actor">Celebrity / Actor</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Creator Name (optional)</label>
+        <input type="text" id="creatorName" placeholder="e.g. Deeksha Khurana, Anahita...">
+      </div>
+
+      <div class="field">
+        <label>Product / Collection</label>
+        <select id="product">
+          <option value="">Select product</option>
+          <option value="Workwear Dress">Workwear Dress</option>
+          <option value="Co-ord Set">Co-ord Set</option>
+          <option value="Occasion / Party Dress">Occasion / Party Dress</option>
+          <option value="Blazer & Trouser Set">Blazer & Trouser Set</option>
+          <option value="Linen Collection">Linen Collection</option>
+          <option value="Festive Collection">Festive Collection</option>
+          <option value="Everyday Casuals">Everyday Casuals</option>
+          <option value="New Arrivals">New Arrivals</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Occasion</label>
+        <div class="chips" id="occasionChips">
+          <span class="chip" onclick="pick(this,'occ','on-rust')">Office / Work</span>
+          <span class="chip" onclick="pick(this,'occ','on-rust')">Date Night</span>
+          <span class="chip" onclick="pick(this,'occ','on-rust')">Wedding Guest</span>
+          <span class="chip" onclick="pick(this,'occ','on-rust')">Weekend Brunch</span>
+          <span class="chip" onclick="pick(this,'occ','on-rust')">Travel</span>
+          <span class="chip" onclick="pick(this,'occ','on-rust')">Festive / Puja</span>
+          <span class="chip" onclick="pick(this,'occ','on-rust')">Everyday</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Content Format</label>
+        <div class="chips" id="formatChips">
+          <span class="chip" onclick="pick(this,'fmt','on-gold')">Reel (6090s)</span>
+          <span class="chip" onclick="pick(this,'fmt','on-gold')">Short Reel (1530s)</span>
+          <span class="chip" onclick="pick(this,'fmt','on-gold')">Stories</span>
+          <span class="chip" onclick="pick(this,'fmt','on-gold')">Static Post</span>
+          <span class="chip" onclick="pick(this,'fmt','on-gold')">Carousel</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Campaign Goal</label>
+        <div class="chips" id="goalChips">
+          <span class="chip" onclick="pick(this,'goal','on-sage')">Brand Awareness</span>
+          <span class="chip" onclick="pick(this,'goal','on-sage')">Drive Traffic</span>
+          <span class="chip" onclick="pick(this,'goal','on-sage')">Conversions / Sales</span>
+          <span class="chip" onclick="pick(this,'goal','on-sage')">New Collection Launch</span>
+          <span class="chip" onclick="pick(this,'goal','on-sage')">Styling Inspiration</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Specific Notes</label>
+        <textarea id="notes" placeholder="Anything specific shoot style, creator's audience, things to avoid..."></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <button class="gen-btn" id="genBtn" onclick="generate()">
+        Generate Brief
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7H13M13 7L8 2M13 7L8 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+
+      <div class="err" id="errMsg"></div>
+    </div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="out" id="out">
+    <div class="empty">
+      <div class="empty-icon">✦</div>
+      <div class="empty-title">Your brief will appear here</div>
+      <p class="empty-desc">Fill in the parameters on the left and hit Generate. Takes about 1015 seconds.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const sel = { occ: null, fmt: null, goal: null };
+let briefText = '';
+
+function pick(el, group, cls) {
+  const map = { occ:'occasionChips', fmt:'formatChips', goal:'goalChips' };
+  document.querySelectorAll('#'+map[group]+' .chip').forEach(c => { c.className='chip'; });
+  el.classList.add(cls);
+  sel[group] = el.textContent;
+}
+
+function loadExample(k) {
+  const ex = {
+    deeksha: { type:'Macro Fashion Influencer (100K+ followers)', name:'Deeksha Khurana', product:'Workwear Dress', occ:'Office / Work', fmt:'Reel (6090s)', goal:'Styling Inspiration', notes:'Deeksha has worn Qua organically before. She should style it in her signature elegant-minimal way. No heavy voiceover let the visuals speak.' },
+    anahita: { type:'Mid-tier Fashion Creator (20K100K followers)', name:'Anahita', product:'Occasion / Party Dress', occ:'Wedding Guest', fmt:'Reel (6090s)', goal:'Brand Awareness', notes:'Focus on the getting-ready journey. Show the dress being styled with accessories. The feeling of arriving and feeling completely yourself.' },
+    stylist: { type:'Personal Stylist or Fashion Editor', name:'', product:'New Arrivals', occ:'Office / Work', fmt:'Stories', goal:'Drive Traffic', notes:'This is a gifting brief, not a paid collab. The stylist should feel respected and free. Focus on styling versatility across different body types.' },
+    micro: { type:'Micro Influencer (5K20K followers)', name:'', product:'Everyday Casuals', occ:'Everyday', fmt:'Short Reel (1530s)', goal:'Conversions / Sales', notes:'Authentic, no heavy editing. Must feel like real life, not a campaign. Show the fabric, the fit, how it feels to wear it all day.' }
+  };
+  const e = ex[k];
+  document.getElementById('creatorType').value = e.type;
+  document.getElementById('creatorName').value = e.name;
+  document.getElementById('product').value = e.product;
+  document.getElementById('notes').value = e.notes;
+  const colorMap = { occ:'on-rust', fmt:'on-gold', goal:'on-sage' };
+  const idMap = { occ:'occasionChips', fmt:'formatChips', goal:'goalChips' };
+  const keyMap = { occ:e.occ, fmt:e.fmt, goal:e.goal };
+  ['occ','fmt','goal'].forEach(g => {
+    document.querySelectorAll('#'+idMap[g]+' .chip').forEach(chip => {
+      chip.className='chip';
+      if (chip.textContent === keyMap[g]) { chip.classList.add(colorMap[g]); sel[g]=chip.textContent; }
+    });
+  });
+}
+
+async function generate() {
+  const type = document.getElementById('creatorType').value;
+  const product = document.getElementById('product').value;
+  if (!type || !product) { showErr('Please select a creator type and product.'); return; }
+  hideErr();
+
+  const name = document.getElementById('creatorName').value.trim();
+  const notes = document.getElementById('notes').value.trim();
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true; btn.textContent = 'Writing brief...';
+
+  showLoading();
+
+  const prompt = `You are a brand strategist writing a creator brief for QUA an Indian women's clothing brand. QUA is minimal, elegant, and made for the modern Indian woman who earns her own money, dresses with intention, and rejects anything try-hard or costume-y. Think quiet luxury for India.
+
+Creator details:
+- Type: ${type}
+- Name: ${name || 'unnamed creator'}
+- Product: ${product}
+- Occasion: ${sel.occ || 'general'}
+- Content format: ${sel.fmt || 'Reel'}
+- Campaign goal: ${sel.goal || 'Brand Awareness'}
+- Brand notes: ${notes || 'none'}
+
+Write a complete creator brief with exactly these 7 sections. Use these exact headings, each on its own line in ALL CAPS:
+
+HOOK CONCEPT
+Write 2-3 specific, visual hook ideas for how to open the content. Reference the product and occasion specifically.
+
+SHOT LIST
+Write 6-8 numbered shots the creator must capture. Be specific lighting, angles, settings, what to show.
+
+CAPTION
+Write a full suggested caption in Qua's voice elevated, warm, never corporate. 80-100 words. Include a call to action.
+
+DOS
+Write 5 numbered things the creator must do. Specific to Qua's brand values.
+
+DONTS
+Write 5 numbered things to avoid. Reflect Qua's positioning no fast fashion aesthetics, no over-editing.
+
+HASHTAGS
+List exactly 8 hashtags. First 3 are primary (mark them PRIMARY), next 5 are secondary.
+
+USAGE RIGHTS
+One short, warm paragraph about how Qua may reshare the content. Collaborative tone, not legal-sounding.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role:'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+    if (text && text.length > 100) {
+      briefText = text;
+      renderBrief(text, name, type, product, sel.fmt);
+    } else {
+      throw new Error('empty');
+    }
+  } catch(e) {
+    briefText = makeFallback(name, type, product, sel.occ, sel.fmt, sel.goal, notes);
+    renderBrief(briefText, name, type, product, sel.fmt);
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = 'Generate Brief <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7H13M13 7L8 2M13 7L8 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+}
+
+function makeFallback(name, type, product, occ, fmt, goal, notes) {
+  const n = name || 'the creator';
+  const o = occ || 'everyday moments';
+  const p = product || 'Qua collection';
+  return `HOOK CONCEPT
+Option 1: Open on a close-up of the ${p} fabric no sound, no movement. Just the texture and the drape. Then slow pull back to reveal ${n} already dressed, already composed. She was never getting ready. She was already there.
+
+Option 2: ${n} at a window, natural light, looking out. She turns to camera no performance, no greeting. Just presence. The garment speaks before she does.
+
+Option 3: A single shot of the outfit laid flat on clean linen. Then cut to ${n} wearing it in a real moment coffee, a walk, a meeting. The same garment, a completely different energy.
+
+SHOT LIST
+1. Macro shot of the ${p} fabric capture the weave, weight, and texture in natural light
+2. Full-length mirror shot, no flash, showing the complete silhouette honestly
+3. Movement shot walking toward or past the camera, fabric moving naturally
+4. Detail shot neckline, hem, sleeve, or a seam that defines the garment
+5. Context shot ${n} in a real setting suited to ${o}, not a studio backdrop
+6. Hands shot holding a coffee cup, phone, or bag grounded in everyday life
+7. Over-the-shoulder or back shot understated, no eye contact needed
+8. Final closing shot walking away. Quiet exit. Let the garment have the last word.
+
+CAPTION
+Some clothes ask you to perform. This one just asks you to show up.
+
+The ${p} is made for the version of you that already knows what she wants to wear and exactly what she doesn't. Considered. Minimal. Completely right for every room you walk into.
+
+Wearing @QuaClothing link in bio to shop the ${p}.
+
+DOS
+1. Film in natural light the fabric was designed for honest light, not ring-light flatness
+2. Show real movement let the garment breathe and drape as it actually does on the body
+3. Style it the way you genuinely would Qua trusts your eye and your taste
+4. Include at least one close-up detail shot fabric, stitching, or a design element
+5. Allow moments of stillness in the video not every second needs to be filled
+
+DONTS
+1. No heavy colour grading Qua's palette is precise and intentional, don't wash it out
+2. No fast cuts or trend-chasing transitions this is not fast fashion content
+3. Don't mention discounts, sale urgency, or promo codes it undermines the brand
+4. Avoid overly posed or stiff styling the Qua woman is at ease, never performing
+5. Don't write captions that feel like ad copy the voice should sound like yours, not a brand script
+
+HASHTAGS
+PRIMARY #QuaClothing
+PRIMARY #QuaWoman
+PRIMARY #IndianDesigner
+#WomenWhoWearQua
+#ElevatedEveryday
+#SlowFashionIndia
+#IndianFashion
+#StyleWithIntent
+
+USAGE RIGHTS
+Qua may reshare your content on our Instagram, website, and marketing materials, always with full credit and a tag to your profile. We will never edit your content without your permission this is your work and your voice. We are grateful to be part of it.`;
+}
+
+function showLoading() {
+  document.getElementById('out').innerHTML = `
+    <div class="loading">
+      <div class="loading-title">Writing your brief...</div>
+      <div class="bar-wrap"><div class="bar"></div></div>
+      <div class="load-steps">
+        <div class="load-step" style="animation-delay:0.3s">Reading creator profile</div>
+        <div class="load-step" style="animation-delay:1s">Matching to Qua brand voice</div>
+        <div class="load-step" style="animation-delay:1.8s">Crafting hooks and shot list</div>
+      </div>
+    </div>`;
+}
+
+function renderBrief(text, name, type, product, fmt) {
+  const sections = parse(text);
+  const title = name ? `Brief for ${name}` : 'Creator Brief';
+
+  let html = `<div class="brief">
+    <div class="brief-head">
+      <div>
+        <div class="brief-head-title">${esc(title)}</div>
+        <div class="brief-head-sub">${esc(product || '')} &nbsp;·&nbsp; ${esc(type || '')}</div>
+      </div>
+      <div class="brief-tag">${esc(fmt || 'Content Brief')}</div>
+    </div>
+    <div class="brief-body">`;
+
+  // Hook
+  if (sections.HOOK) {
+    html += sec('Hook Concept', `<div class="highlight">${esc(sections.HOOK)}</div>`);
+  }
+
+  // Shot List
+  if (sections.SHOT) {
+    html += sec('Shot List', `<div class="sec-text">${esc(sections.SHOT)}</div>`);
+  }
+
+  // Caption
+  if (sections.CAPTION) {
+    html += sec('Caption Direction', `<div class="highlight">${esc(sections.CAPTION)}</div>`);
+  }
+
+  // Do/Dont
+  const dos = sections.DOS || '';
+  const donts = sections.DONTS || '';
+  if (dos || donts) {
+    const doItems = bullets(dos);
+    const dontItems = bullets(donts);
+    html += sec("Do's & Don'ts", `<div class="dodont">
+      <div class="do-box"><div class="dd-label">Do</div><ul class="dd-list">${doItems.map(d=>`<li>${esc(d)}</li>`).join('')}</ul></div>
+      <div class="dont-box"><div class="dd-label">Don't</div><ul class="dd-list">${dontItems.map(d=>`<li>${esc(d)}</li>`).join('')}</ul></div>
+    </div>`);
+  }
+
+  // Hashtags
+  if (sections.HASHTAGS) {
+    const tags = sections.HASHTAGS.match(/#\w+/g) || [];
+    const primaryTags = sections.HASHTAGS.match(/PRIMARY\s+(#\w+)/gi) || [];
+    const primarySet = new Set(primaryTags.map(t => t.replace(/PRIMARY\s+/i,'').toLowerCase()));
+    if (tags.length) {
+      html += sec('Hashtags', `<div class="tags">${tags.map(t=>`<span class="htag ${primarySet.has(t.toLowerCase())?'primary':''}">${esc(t)}</span>`).join('')}</div>`);
+    }
+  }
+
+  // Usage Rights
+  if (sections.USAGE) {
+    html += sec('Usage Rights', `<div class="sec-text">${esc(sections.USAGE)}</div>`);
+  }
+
+  html += `</div>
+    <div class="brief-foot">
+      <button class="act-btn primary" onclick="copyBrief()">Copy Full Brief</button>
+      <button class="act-btn" onclick="generate()">Regenerate</button>
+      <span class="copy-ok" id="copyOk">✓ Copied to clipboard</span>
+    </div>
+  </div>`;
+
+  document.getElementById('out').innerHTML = html;
+}
+
+function sec(label, content) {
+  return `<div class="sec"><div class="sec-label">${label}</div>${content}</div>`;
+}
+
+function parse(text) {
+  const out = {};
+  const patterns = [
+    ['HOOK', /HOOK CONCEPT\s*([\s\S]*?)(?=\nSHOT LIST|\nSHOT\s|\nCAPTION|\nDOS|\nDON|$)/i],
+    ['SHOT', /(?:THE\s+)?SHOT LIST\s*([\s\S]*?)(?=\nCAPTION|\nDOS|\nDON|$)/i],
+    ['CAPTION', /CAPTION(?:\s+DIRECTION)?\s*([\s\S]*?)(?=\nDOS|\nDO'S|\nDON|$)/i],
+    ['DOS', /DO[S']*\s*\n([\s\S]*?)(?=\nDON|\nHASH|$)/i],
+    ['DONTS', /DON[T']*S?\s*\n([\s\S]*?)(?=\nHASH|$)/i],
+    ['HASHTAGS', /HASHTAG[S]?\s*([\s\S]*?)(?=\nUSAGE|$)/i],
+    ['USAGE', /USAGE RIGHTS\s*([\s\S]*?)$/i],
+  ];
+  for (const [key, rx] of patterns) {
+    const m = text.match(rx);
+    if (m) out[key] = m[1].trim();
+  }
+  return out;
+}
+
+function bullets(text) {
+  return text.split('\n').map(l => l.replace(/^[\d\.\-\*•]+\s*/,'').trim()).filter(Boolean);
+}
+
+function esc(t) {
+  return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function showErr(msg) { const e=document.getElementById('errMsg'); e.textContent=msg; e.style.display='block'; }
+function hideErr() { document.getElementById('errMsg').style.display='none'; }
+
+async function copyBrief() {
+  try {
+    await navigator.clipboard.writeText(briefText);
+    const el = document.getElementById('copyOk');
+    el.classList.add('show');
+    setTimeout(()=>el.classList.remove('show'), 2500);
+  } catch(e){}
+}
+</script>
+</body>
+</html>
